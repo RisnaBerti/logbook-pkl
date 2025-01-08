@@ -1,0 +1,40 @@
+<x-layouts.app title="Detail {{modelTitle}}" activeMenu="{{modelRoute}}.show">
+     <div class="container my-5">
+        <x-breadcrumb title="Detail {{modelTitle}}" :breadcrumbs="[
+            ['label' => 'Dashboard', 'url' => url('/')],
+            ['label' => '{{modelTitle}}', 'url' => route('{{modelRoute}}.index')],
+            ['label' => 'Detail {{modelTitle}}'],
+        ]" />
+
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between">
+                    <a href="{{ route('{{modelRoute}}.index') }}" class="btn btn-sm btn-secondary">
+                        <i class="bx bx-arrow-back me-1"></i>Kembali
+                    </a>
+
+                    <div>
+                        <a href="{{ route('{{modelRoute}}.create') }}"
+                            class="btn btn-sm btn-info">
+                            <i class="bx bx-plus me-1"></i>Baru
+                        </a>
+                        <a href="{{ route('{{modelRoute}}.edit', ${{modelVariable}}) }}"
+                            class="btn btn-sm btn-primary">
+                            <i class="bx bx-pencil me-1"></i>Edit
+                        </a>
+                        <a href="{{ route('{{modelRoute}}.destroy', ${{modelVariable}}) }}"
+                            class="btn btn-sm btn-danger">
+                            <i class="bx bx-trash me-1"></i>Hapus
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+            <div class="card-body">
+                <form class="row g-3">
+                    {{{show.field.stub}}}
+                </form>
+            </div>
+        </div>
+    </div>
+</x-layouts.app>

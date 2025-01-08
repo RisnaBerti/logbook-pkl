@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>I-ON Wonogiri</title>
+
+    <!-- Fonts -->
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"> -->
+
+    <!-- CSS -->
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> -->
+
+      <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+  
+      <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --dark-color: #343a40;
+            --light-color: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('assets/img/background.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            display: flex;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* About Section */
+        .about-section {
+            padding: 5rem 0;
+            background-color: var(--light-color);
+        }
+
+        .about-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 0;
+            background-color: white;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        /* Programs Section */
+        .programs {
+            padding: 5rem 0;
+            background-color: var(--light-color);
+        }
+
+        .program-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .program-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .program-image {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 5rem 0;
+            background-color: white;
+        }
+
+        .contact-form {
+            background: var(--light-color);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 3rem 0;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Buttons */
+        .btn-custom {
+            padding: 0.8rem 2rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .feature-card {
+                margin-bottom: 2rem;
+            }
+
+            .about-image {
+                margin-top: 2rem;
+            }
+        }
+
+        .about-section {
+            padding: 60px 0;
+            /* Jarak atas dan bawah */
+            background-color: #f8f9fa;
+            /* Warna latar belakang */
+        }
+
+        .about-card {
+            background-color: white;
+            /* Warna latar belakang kartu */
+            border-radius: 10px;
+            /* Sudut melengkung */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            /* Bayangan */
+            padding: 30px;
+            /* Jarak dalam kartu */
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            /* Ukuran font untuk judul */
+            color: #333;
+            /* Warna teks */
+        }
+
+        h3 {
+            font-size: 1.75rem;
+            /* Ukuran font untuk subjudul */
+            color: #555;
+            /* Warna teks */
+        }
+
+        .lead {
+            font-size: 1.1rem;
+            /* Ukuran font untuk paragraf utama */
+            line-height: 1.5;
+            /* Jarak antar baris */
+        }
+
+        .list-unstyled li {
+            margin-bottom: 10px;
+            /* Jarak antar item dalam list */
+        }
+
+        .about-image {
+            max-width: 100%;
+            /* Memastikan gambar responsif */
+            height: auto;
+            /* Memastikan gambar tidak terdistorsi */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="assets/img/logo.png" alt="I-ON Wonogiri" height="40">
+                <span class="ms-2 fw-bold">I-ON Wonogiri</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">Tentang Kami</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#programs">Program</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Kontak</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary text-white ms-lg-3 px-4" href="{{ route('login') }}">Daftar</a>                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="display-4 fw-bold mb-4">Belajar Tanpa Batas, Harga Terjangkau!</h1>
+                <p class="lead mb-5">Jangan biarkan biaya menghalangi mimpi Anda. Bergabunglah dengan kami untuk kursus
+                    yang fleksibel dan mudah diakses.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="#programs" class="btn btn-custom btn-light">Lihat Program</a>
+                    <a href="#contact" class="btn btn-custom btn-primary">Hubungi Kami</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="about-card">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <h2 class="fw-bold mb-4">Selamat Datang di I-ON Wonogiri</h2>
+                        <p class="lead mb-4">Sejak 2018, I-ON Wonogiri telah membantu Anda mengasah keterampilan di
+                            bidang <strong>Bahasa Jepang</strong>, <strong>Mengemudi</strong>, dan <strong>Teknologi
+                                Digital</strong> (komputer & digital marketing). Kami berkomitmen memberikan pelatihan
+                            yang berkualitas untuk mempersiapkan Anda menghadapi dunia profesional.</p>
+                        <h3 class="fw-bold mt-4">Pelatihan Kami:</h3>
+                        <ul class="list-unstyled mb-4">
+                            <li><strong>Bahasa Jepang:</strong> Mempermudah komunikasi global di dunia kerja.</li>
+                            <li><strong>Mengemudi:</strong> Mengemudi aman dan percaya diri.</li>
+                            <li><strong>Teknologi Digital:</strong>
+                                <ul>
+                                    <li><strong>Komputer (Microsoft Office):</strong> Menguasai alat seperti Word,
+                                        Excel, PowerPoint.</li>
+                                    <li><strong>Digital Marketing:</strong> Mempelajari pemasaran online efektif.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p>Dengan lebih dari 6 tahun pengalaman, kami siap membantu Anda meraih impian dan membuka
+                            peluang karier. Hubungi kami untuk informasi lebih lanjut!</p>
+                    </div>
+                    <div class="col-lg-6">
+                        <img src="assets/img/mengemudi.png" alt="Tentang Kami" class="img-fluid rounded-3 about-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-5">Mengapa Memilih Kami?</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="bi bi-cash feature-icon"></i>
+                        <h3 class="h4 mb-3">Biaya Terjangkau</h3>
+                        <p>Belajar dengan kami tidak akan membuat kantong Anda bolong!</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="bi bi-people feature-icon"></i>
+                        <h3 class="h4 mb-3">Akses Mudah</h3>
+                        <p>Akses kursus kapan saja dan di mana saja sesuai kebutuhan Anda.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="bi bi-calendar feature-icon"></i>
+                        <h3 class="h4 mb-3">Fleksibilitas Waktu</h3>
+                        <p>Jadwal yang fleksibel untuk menyesuaikan dengan kesibukan Anda.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Programs Section -->
+    <!-- Programs Section -->
+    <section id="programs" class="programs">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-5">Program Pelatihan Kami</h2>
+            <div class="row">
+                <!-- Program Card -->
+                <div class="col-md-4">
+                    <div class="program-card">
+                        <div class="p-4">
+                            <h3 class="h5 mb-3">Kursus Mengemudi</h3>
+                            <p>Jadilah pengemudi yang handal dan siap menghadapi jalan raya dengan percaya diri.</p>
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#infoModal">
+                                Pelajari Lebih Lanjut
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="infoModalLabel">Informasi Kursus Mengemudi</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Kursus Mengemudi kami dirancang untuk membekali Anda dengan keterampilan dan
+                                    pengetahuan yang diperlukan untuk menjadi pengemudi yang handal.</p>
+                                <ul>
+                                    <li>Pengenalan dasar-dasar mengemudi</li>
+                                    <li>Praktik di jalan raya</li>
+                                    <li>Pengujian keterampilan mengemudi</li>
+                                    <li>Tips aman berkendara</li>
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="button" class="btn btn-primary">Daftar Sekarang</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="text-center mb-5">
+                        <h2 class="fw-bold">Hubungi Kami</h2>
+                        <p class="lead">Ada pertanyaan? Kami siap membantu Anda kapan saja!</p>
+                    </div>
+                    <div class="contact-form">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <input type="text" class="form-control" placeholder="Nama Depan" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <input type="text" class="form-control" placeholder="Nama Belakang" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <input type="email" class="form-control" placeholder="Email" required>
+                            </div>
+                            <div class="mb-3">
+                                <textarea class="form-control" rows="4" placeholder="Pesan" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Kirim Pesan</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="text-center">
+                <h3 class="mb-4">I-ON Wonogiri</h3>
+                <div class="footer-links mb-4">
+                    <a href="#about">Tentang Kami</a>
+                    <a href="#programs">Program</a>
+                    <a href="#contact">Kontak</a>
+                    <a href="#">Blog</a>
+                </div>
+                <p class="mb-0">&copy; 2024 I-ON Wonogiri. Semua Hak Dilindungi.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> -->
+    <!-- jQuery dan Bootstrap JS -->
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script> -->
+     <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
