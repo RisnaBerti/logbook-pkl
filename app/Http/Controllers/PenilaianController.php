@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AnakPkl;
-use App\Models\Keterampilan;
 use App\Models\Mentor;
+use App\Models\AnakPkl;
 use App\Models\Penilaian;
-use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use \Illuminate\Routing\Controllers\HasMiddleware;
+use App\Models\Keterampilan;
+use Illuminate\Http\Request;
+use App\Models\DetailPenilaian;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controllers\Middleware;
+use \Illuminate\Routing\Controllers\HasMiddleware;
 use Woo\GridView\DataProviders\EloquentDataProvider;
 
 class PenilaianController extends Controller implements HasMiddleware
@@ -27,7 +29,20 @@ class PenilaianController extends Controller implements HasMiddleware
 
     public function index(): View
     {
-        $penilaian = Penilaian::paginate(10);
+        $user = auth()->user();
+        $query = Penilaian::with('detail');
+
+        // Filter data berdasarkan peran pengguna
+        if ($user->id_mentor) {
+            // Jika user adalah mentor
+            $query->where('id_mentor', $user->id_mentor);
+        } elseif ($user->hasRole('anak-pkl')) {
+            // Jika user adalah anak PKL
+            $query->where('id_anak_pkl', $user->id_anak_pkl);
+        } 
+
+        // Order berdasarkan tanggal penilaian terbaru
+        $penilaian = $query->orderBy('tanggal_penilaian', 'desc')->paginate(10);
 
         return view('penilaian.index', compact('penilaian'));
     }
@@ -36,7 +51,7 @@ class PenilaianController extends Controller implements HasMiddleware
     {
         $penilaian = new Penilaian();
         $mentors = Mentor::all();
-        $anakPkl = AnakPkl::all();
+        $anakPkl = AnakPkl::doesntHave('penilaian')->get();
         $keterampilan = Keterampilan::all();
 
 
@@ -44,31 +59,43 @@ class PenilaianController extends Controller implements HasMiddleware
     }
 
     public function store(Request $request): RedirectResponse
-    {        
+    {
         // dd($request->all());
 
         $request->validate([
             'id_mentor' => 'required|exists:mentor,id_mentor',
             'id_anak_pkl' => 'required|exists:anak_pkl,id_anak_pkl',
-            'penilaian.*.id_keterampilan' => 'required|exists:keterampilan,id_keterampilan',
-            'penilaian.*.nilai' => 'required|numeric|min:0|max:100',
-            'penilaian.*.keterangan' => 'nullable|string|max:255',
+            'detail_penilaian' => 'required|array|min:1',
+            'detail_penilaian.*.id_keterampilan' => 'required|exists:keterampilan,id_keterampilan',
+            'detail_penilaian.*.nilai' => 'required|numeric|min:0|max:100',
         ]);
 
-
         try {
-            // Simpan setiap penilaian dengan id_anak_pkl yang sama
-            foreach ($request->penilaian as $nilai) {
-                Penilaian::create([
-                    'id_mentor' => $request->id_mentor,
-                    'id_anak_pkl' => $request->id_anak_pkl, // Menggunakan id_anak_pkl yang sama
-                    'id_keterampilan' => $nilai['id_keterampilan'],
-                    'tanggal_penilaian' => now(),
-                    'nilai' => $nilai['nilai'],
-                    'keterangan' => $nilai['keterangan'],
+            // Hitung total dan rata-rata
+            $totalNilai = 0;
+            $jumlahNilai = count($request->detail_penilaian);
+
+            foreach ($request->detail_penilaian as $detail) {
+                $totalNilai += $detail['nilai'];
+            }
+            $rataRata = $totalNilai / $jumlahNilai;
+            // Simpan data penilaian
+            $penilaian = new Penilaian();
+            $penilaian->id_mentor = $request->id_mentor;
+            $penilaian->id_anak_pkl = $request->id_anak_pkl;
+            $penilaian->tanggal_penilaian = now();
+            $penilaian->nilai_rata_rata = $rataRata;
+            $penilaian->save();
+            // dd('sampe sini ga');
+
+            // Simpan detail penilaian
+            foreach ($request->detail_penilaian as $detail) {
+                DetailPenilaian::create([
+                    'id_penilaian' => $penilaian->id_penilaian,
+                    'id_keterampilan' => $detail['id_keterampilan'],
+                    'nilai' => $detail['nilai']
                 ]);
             }
-            // Penilaian::create($validatedData);
         } catch (\Illuminate\Database\QueryException $e) {
             return redirect()->route('penilaian.index')
                 ->with('error', 'Terjadi kesalahan saat membuat data.');
@@ -86,29 +113,59 @@ class PenilaianController extends Controller implements HasMiddleware
 
     public function edit($id): View
     {
-        $penilaian = Penilaian::find($id);
+        // $penilaian = Penilaian::find($id);
+        $penilaian = Penilaian::with('detail')->findOrFail($id);
         $mentors = Mentor::all();
         $anakPkl = AnakPkl::all();
         $keterampilan = Keterampilan::all();
 
-        return view('penilaian.edit', compact('penilaian', 'keterampilan', 'mentors', 'anakPkl'));
+        // Ambil semua penilaian terkait mentor dan anak PKL ini
+        $penilaianDetails = Penilaian::where('id_mentor', $penilaian->id_mentor)
+            ->where('id_anak_pkl', $penilaian->id_anak_pkl)
+            ->get();
+
+        return view('penilaian.edit', compact('penilaian', 'penilaianDetails', 'keterampilan', 'mentors', 'anakPkl'));
     }
 
     public function update(Request $request, $id): RedirectResponse
     {
         $penilaian = Penilaian::find($id);
 
-        $validatedData = $request->validate([
-            'id_anak_pkl' => 'required|string|max:36',
-            'id_mentor' => 'required|string|max:36',
-            'id_keterampilan' => 'required|string|max:36',
-            'tanggal_penilaian' => 'required|date',
-            'nilai' => 'required|integer',
-            'keterangan' => 'required|string|max:255',
+        $request->validate([
+            'id_mentor' => 'required|exists:mentor,id_mentor',
+            'id_anak_pkl' => 'required|exists:anak_pkl,id_anak_pkl',
+            'detail_penilaian' => 'required|array|min:1',
+            'detail_penilaian.*.id_keterampilan' => 'required|exists:keterampilan,id_keterampilan',
+            'detail_penilaian.*.nilai' => 'required|numeric|min:0|max:100',
         ]);
 
         try {
-            $penilaian->update($validatedData);
+            // Hitung total dan rata-rata
+            $totalNilai = array_sum(array_column($request->detail_penilaian, 'nilai'));
+            $jumlahNilai = count($request->detail_penilaian);
+            $rataRata = $totalNilai / $jumlahNilai;
+
+            // Perbarui data penilaian
+            $penilaian->id_mentor = $request->id_mentor;
+            $penilaian->id_anak_pkl = $request->id_anak_pkl;
+            $penilaian->tanggal_penilaian = $request->tanggal_penilaian; // Gunakan key yang benar
+            $penilaian->nilai_rata_rata = $rataRata;
+            $penilaian->save();
+
+            // Perbarui detail penilaian
+            // Hapus detail lama
+            DetailPenilaian::where('id_penilaian', $penilaian->id_penilaian)->delete();
+
+            // Simpan detail baru
+            foreach ($request->detail_penilaian as $detail) {
+                DetailPenilaian::create([
+                    'id_penilaian' => $penilaian->id_penilaian,
+                    'id_keterampilan' => $detail['id_keterampilan'],
+                    'nilai' => $detail['nilai'],
+                ]);
+            }
+
+            // $penilaian->update($validatedData);
         } catch (\Illuminate\Database\QueryException $e) {
             if ($e->getCode() == '23000') {
                 return redirect()->route('penilaian.index')
@@ -125,17 +182,30 @@ class PenilaianController extends Controller implements HasMiddleware
     public function destroy($id): RedirectResponse
     {
         try {
-            Penilaian::destroy($id);
+            // Hapus detail penilaian
+            DetailPenilaian::where('id_penilaian', $id)->delete();
+
+            // Hapus penilaian
+            $penilaian = Penilaian::findOrFail($id);
+            $penilaian->delete();
+
+            // Berhasil menghapus
+            return redirect()->route('penilaian.index')
+                ->with('success', 'Data penilaian berhasil dihapus.');
         } catch (\Illuminate\Database\QueryException $e) {
             if ($e->getCode() == '23000') {
+                // Data terpakai
                 return redirect()->route('penilaian.index')
                     ->with('error', 'Data penilaian ini sudah digunakan dan tidak dapat dihapus.');
             }
+
+            // Kesalahan umum
             return redirect()->route('penilaian.index')
                 ->with('error', 'Terjadi kesalahan saat menghapus data.');
         }
 
+        // Tambahkan return default jika semua blok gagal
         return redirect()->route('penilaian.index')
-            ->with('success', 'Penilaian berhasil dihapus');
+            ->with('error', 'Terjadi kesalahan yang tidak diketahui.');
     }
 }

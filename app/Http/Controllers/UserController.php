@@ -8,6 +8,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Generators\Services\ImageService;
 use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
 use App\Http\Requests\Users\{StoreUserRequest, StoreUserUnitRequest, StoreUserUnitSekolahRequest, UpdateUserRequest, UpdateUserUnitSekolahRequest};
+use App\Models\Mentor;
 use App\Models\UnitSekolah;
 use App\Models\UsersUnitSekolah;
 use Illuminate\Support\Facades\DB;
@@ -66,9 +67,13 @@ class UserController extends Controller implements HasMiddleware
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): View
+    public function create(User $user): View
     {
-        return view('users.create')
+        $mentor = Mentor::all();
+        // $user = User::all();
+        $user->load('roles:id,name');
+
+        return view('users.create', compact('mentor', 'user'))
             ->with('roles', Role::select('id', 'name')->get());
     }
 
@@ -81,6 +86,7 @@ class UserController extends Controller implements HasMiddleware
             'name' => ['required', 'min:3', 'max:255'],
             'username' => ['required', 'unique:users,username'],
             'role' => ['required', 'exists:roles,id'],
+            'id_mentor' => ['nullable', 'exists:roles,id_mentor'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
 
@@ -113,9 +119,10 @@ class UserController extends Controller implements HasMiddleware
      */
     public function edit(User $user): View
     {
+        $mentor = Mentor::all();
         $user->load('roles:id,name');
 
-        return view('users.edit', compact('user'))
+        return view('users.edit', compact('user', 'mentor'))
             ->with('roles', Role::select('id', 'name')->get());
     }
 
@@ -128,6 +135,7 @@ class UserController extends Controller implements HasMiddleware
             'name' => ['required', 'min:3', 'max:255'],
             'username' => ['required', 'unique:users,username,' . $user->id],
             'role' => ['required', 'exists:roles,id'],
+            'id_mentor' => ['nullable', 'exists:mentor,id_mentor'],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
         ]);
 

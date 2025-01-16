@@ -28,17 +28,33 @@
 
     {{-- <div class="col-md-6">
         <div class="form-group">
-            <label for="email">{{ __('Email') }}</label>
-            <input type="email" name="email" id="email"
-                class="form-control @error('email') is-invalid @enderror" placeholder="{{ __('Email') }}"
-                value="{{ isset($user) ? $user->email : old('email') }}" required>
-            @error('email')
+            <label for="id_mentor">{{ __('Mentor') }}</label>
+            <input type="id_mentor" name="id_mentor" id="id_mentor"
+                class="form-control @error('id_mentor') is-invalid @enderror" placeholder="{{ __('id_mentor') }}"
+                value="{{ isset($user) ? $user->id_mentor : old('id_mentor') }}" required>
+            @error('id_mentor')
                 <span class="invalid-feedback">
                     {{ $message }}
                 </span>
             @enderror
         </div>
     </div> --}}
+
+    <div class="mb-4">
+        <label for="id_mentor" class="form-label">Mentor</label>
+        <select name="id_mentor" class="form-control @error('id_mentor') is-invalid @enderror" id="id_mentor">
+            <option value=""> -- Pilih Mentor -- </option>
+            @foreach ($mentor as $dt)
+                <option value="{{ $dt->id_mentor }}"
+                    {{ old('id_mentor', $user?->id_mentor) == $dt->id_mentor ? 'selected' : '' }}>
+                    {{ $dt->nama_mentor }} <!-- Misalnya, nama unit yang ingin ditampilkan -->
+                </option>
+            @endforeach
+        </select>
+        @error('id_mentor')
+            <small class="invalid-feedback">{{ $message }}</small>
+        @enderror
+    </div>
 
     <div class="col-md-6">
         <div class="form-group">

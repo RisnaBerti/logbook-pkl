@@ -1,25 +1,5 @@
 <div class="row">
     <div class="col-md-12">
-
-        {{-- <div class="mb-4">
-            <label for="id_anak_pkl" class="form-label">Id Anak Pkl</label>
-            <input type="text" name="id_anak_pkl"
-                class="form-control {{ $errors->has('id_anak_pkl') ? 'is-invalid' : '' }}" id="id_anak_pkl"
-                value="{{ old('id_anak_pkl', $jurnal?->id_anak_pkl) }}" placeholder="Masukkan Id Anak Pkl" />
-            @error('id_anak_pkl')
-                <small class="invalid-feedback">{{ $message }}</small>
-            @enderror
-        </div>
-        <div class="mb-4">
-            <label for="id_mentor" class="form-label">Id Mentor</label>
-            <input type="text" name="id_mentor"
-                class="form-control {{ $errors->has('id_mentor') ? 'is-invalid' : '' }}" id="id_mentor"
-                value="{{ old('id_mentor', $jurnal?->id_mentor) }}" placeholder="Masukkan Id Mentor" />
-            @error('id_mentor')
-                <small class="invalid-feedback">{{ $message }}</small>
-            @enderror
-        </div> --}}
-
         <div class="mb-4">
             <label for="id_anak_pkl" class="form-label">Anak Pkl</label>
             <select name="id_anak_pkl" class="form-control @error('id_anak_pkl') is-invalid @enderror" id="id_anak_pkl">
@@ -90,17 +70,6 @@
             <input type="hidden" name="durasi" id="durasi" value="{{ old('durasi', $jurnal?->durasi) }}" />
         </div>
 
-
-        {{-- <div class="mb-4">
-            <label for="durasi" class="form-label">Durasi</label>
-            <x-input.currency name="durasi" id="durasi" value="{{ old('durasi', $jurnal?->durasi) }}"
-                placeholder="Masukkan Durasi"
-                class="form-control text-end {{ $errors->has('durasi') ? 'is-invalid' : '' }}" />
-            @error('durasi')
-                <small class="invalid-feedback">{{ $message }}</small>
-            @enderror
-        </div> --}}
-
         <div class="mb-4">
             <label for="keterangan" class="form-label">Keterangan</label>
             <input type="text" name="keterangan"
@@ -110,37 +79,6 @@
                 <small class="invalid-feedback">{{ $message }}</small>
             @enderror
         </div>
-
-        {{-- <div x-data="timeDurationCalculator()" x-init="init()"> --}}
-        {{-- <div class="mb-4">
-            <label for="waktu_mulai_aktifitas" class="form-label">Waktu Mulai</label>
-            <x-input.timepicker name1="waktu_mulai_aktifitas" id1="timepicker1"
-                value1="{{ old('waktu_mulai_aktifitas', $jurnal?->waktu_mulai_aktifitas) }}" singleTimePicker="true" />
-        </div>
-
-        <div class="mb-4">
-            <label for="waktu_selesai_aktifitas" class="form-label">Waktu Selesai</label>
-            <x-input.timepicker name1="waktu_selesai_aktifitas" id1="timepicker2"
-                value1="{{ old('waktu_selesai_aktifitas', $jurnal?->waktu_selesai_aktifitas) }}"
-                singleTimePicker="true" />
-        </div>
-
-        <div class="mb-4">
-            <label for="durasi" class="form-label">Durasi</label>
-            <x-input.currency name="durasi" id="durasi" placeholder="Masukkan Durasi"
-                class="form-control text-end {{ $errors->has('durasi') ? 'is-invalid' : '' }}" readonly
-                x-bind:value="formattedDuration" />
-            <input type="hidden" name="durasi_detik" x-model="durationInSeconds">
-            @error('durasi')
-                <small class="invalid-feedback">{{ $message }}</small>
-            @enderror
-        </div> --}}
-        {{-- </div> --}}
-
-
-
-
-
     </div>
 </div>
 
@@ -195,7 +133,7 @@
                 // Update hidden input
                 const hiddenInput = document.querySelector(
                     `input[name="${instance.element.id === 'timepicker1' ? 'waktu_mulai_aktifitas' : 'waktu_selesai_aktifitas'}"]`
-                    );
+                );
                 hiddenInput.value = dateStr;
 
                 // Calculate duration

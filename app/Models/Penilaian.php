@@ -32,7 +32,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 class Penilaian extends Model
 {
 	use HasUlids;
-	
+
 	protected $table = 'penilaian';
 	protected $primaryKey = 'id_penilaian';
 	public $incrementing = false;
@@ -43,31 +43,30 @@ class Penilaian extends Model
 	];
 
 	protected $fillable = [
-		'id_anak_pkl',
 		'id_mentor',
-		'id_keterampilan',
+		'id_anak_pkl',
 		'tanggal_penilaian',
-		'nilai',
+		'nilai_rata_rata',
 		'keterangan'
 	];
 
 	public function resolveRouteBinding($value, $field = null)
-    {
-        return $this->where($this->primaryKey, $value)->first();
-    }
+	{
+		return $this->where($this->primaryKey, $value)->first();
+	}
 
 	public function anak_pkl()
 	{
 		return $this->belongsTo(AnakPkl::class, 'id_anak_pkl');
 	}
 
-	public function keterampilan()
-	{
-		return $this->belongsTo(Keterampilan::class, 'id_keterampilan');
-	}
-
 	public function mentor()
 	{
 		return $this->belongsTo(Mentor::class, 'id_mentor');
+	}
+
+	public function detail()
+	{
+		return $this->hasMany(DetailPenilaian::class, 'id_penilaian', 'id_penilaian');
 	}
 }

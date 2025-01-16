@@ -50,13 +50,14 @@ class AnakPkl extends Model
 		'nama_anak_pkl',
 		'no_telp_anak_pkl',
 		'email_anak_pkl',
-		'foto_anak_pkl'
+		'foto_anak_pkl',
+		'status'
 	];
 
 	public function resolveRouteBinding($value, $field = null)
-    {
-        return $this->where($this->primaryKey, $value)->first();
-    }
+	{
+		return $this->where($this->primaryKey, $value)->first();
+	}
 
 	public function mentor()
 	{

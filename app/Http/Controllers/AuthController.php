@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\AnakPkl;
+use App\Models\Sekolah;
+use App\Models\PeriodePkl;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -35,40 +39,70 @@ class AuthController extends Controller
 
     public function register()
     {
-        return view('auth.register');
+        $periode = PeriodePkl::all();
+        $sekolah = Sekolah::all();
+        return view('auth.register', compact('periode', 'sekolah'));
     }
 
     // Proses Registrasi
     public function doRegister(Request $request)
     {
-
-        // echo '<pre>';
-        // print_r($request->all());
-        // echo '</pre>';
-        // die;
-        // 'email' => 'required|string|email|max:255|unique:users',
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed'
+        $request->validate([
+            'nama_anak_pkl' => 'required|string|max:255',
+            'email_anak_pkl' => 'required|email|max:255|unique:users,email', // Validasi terhadap kolom `email` di tabel users
+            'password' => 'required|string|min:6|confirmed',
+            'id_sekolah' => 'required|exists:sekolah,id_sekolah', // Validasi terhadap tabel `sekolah`
+            'id_periode_pkl' => 'required|exists:periode_pkl,id_periode_pkl', // Validasi terhadap tabel `periode_pkl`
+            'no_telp_anak_pkl' => 'required|string|max:15|unique:anak_pkl,no_telp_anak_pkl', // Validasi terhadap tabel `anak_pkl`
         ]);
 
+        try {
+            // Hash password
+            $hashedPassword = Hash::make($request->password);
 
-        $user = User::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password'])
-        ]);
+            // Mulai transaksi database
+            DB::beginTransaction();
 
-        if (!$user) {
+            // Simpan data di tabel anak_pkl
+            $anak_pkl = AnakPkl::create([
+                'nama_anak_pkl' => $request->nama_anak_pkl,
+                'email_anak_pkl' => $request->email_anak_pkl,
+                'no_telp_anak_pkl' => $request->no_telp_anak_pkl,
+                'id_sekolah' => $request->id_sekolah,
+                'id_periode_pkl' => $request->id_periode_pkl,
+                'status' => '1',
+            ]);
+
+            // Simpan data di tabel users
+            $user = User::create([
+                'name' => $request->nama_anak_pkl,
+                'email' => $request->email_anak_pkl, // Pastikan menggunakan kolom `email` di tabel users
+                'password' => $hashedPassword,
+                'id_anak_pkl' => $anak_pkl->id_anak_pkl,
+            ]);
+
+            //hasrole anak-pkl
+            $user->assignRole('anak-pkl');
+            // Commit transaksi
+            DB::commit();
+
+            // Login user secara otomatis
+            Auth::login($user);
+
+            // Redirect ke dashboard dengan pesan sukses
+            return redirect()->route('dashboard')->with('success', 'Registrasi berhasil');
+        } catch (\Exception $e) {
+            // Rollback transaksi jika terjadi error
+            DB::rollBack();
+
+            // Log error untuk debugging (opsional)
+            Log::error('Registrasi Error: ' . $e->getMessage());
+
+            // Kembali dengan pesan error
             return back()->withErrors([
-                'email' => 'Error hubungi admin.',
-            ])->withInput($request->only(['email', 'name']));
+                'error' => 'Terjadi kesalahan saat registrasi. Silakan coba lagi atau hubungi admin.',
+            ])->withInput($request->except('password'));
         }
-
-        Auth::login($user);
-
-        return redirect()->route('dashboard')->with('success', 'Registrasi berhasil');
     }
 
     // Logout

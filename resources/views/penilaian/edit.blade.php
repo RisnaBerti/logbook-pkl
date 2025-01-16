@@ -14,7 +14,7 @@
                     @csrf
                     @method('PUT')
 
-                    @include('penilaian.includes.form')
+                    @include('penilaian.includes.form-edit')
                 </form>
             </div>
         </div>

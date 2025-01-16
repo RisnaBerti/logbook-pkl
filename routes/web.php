@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\AnakPklController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DetailPenilaianController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\JurnalController;
 use App\Http\Controllers\KeterampilanController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\MentorController;
 use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\PeriodePklController;
@@ -12,6 +14,7 @@ use App\Http\Controllers\RoleAndPermissionController;
 use App\Http\Controllers\SekolahController;
 use App\Http\Controllers\SertifikatController;
 use App\Http\Controllers\UserController;
+use App\Models\Sertifikat;
 use Illuminate\Support\Facades\Route;
 
 
@@ -49,8 +52,16 @@ Route::middleware('auth')->group(function () {
     Route::resource('keterampilan', KeterampilanController::class);
     Route::resource('sekolah', SekolahController::class);
     Route::resource('penilaian', PenilaianController::class);
+    Route::resource('detail-penilaian', DetailPenilaianController::class);
     Route::resource('periode-pkl', PeriodePklController::class);
     Route::resource('feedback', FeedbackController::class);
     Route::resource('sertifikat', SertifikatController::class);
     Route::resource('jurnal', JurnalController::class);
+
+    Route::post('/jurnal/{jurnal}/feedback', [JurnalController::class, 'addFeedback'])->name('jurnal.add-feedback');
+    Route::delete('/jurnal-feedback/{feedback}', [JurnalController::class, 'deleteFeedback'])->name('jurnal.delete-feedback');
+
+    Route::get('/sertifikat/view-sertifikat/{id}', [SertifikatController::class, 'viewSertifikat'])->name('sertifikat.view-sertifikat');
+    Route::get('/sertifikat/download/{id}', [SertifikatController::class, 'downloadSertifikat'])->name('sertifikat.download');
+    Route::get('/laporan/jurnal', [LaporanController::class, 'laporanJurnal'])->name('laporan.jurnal');
 });

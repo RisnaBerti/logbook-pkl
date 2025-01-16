@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AnakPkl;
+use App\Models\Feedback;
 use App\Models\Jurnal;
 use App\Models\Mentor;
 use Illuminate\Http\Request;
@@ -26,10 +27,67 @@ class JurnalController extends Controller implements HasMiddleware
 
     public function index(): View
     {
-        $jurnal = Jurnal::paginate(10);
+        $user = auth()->user();
+
+        // Base query with relationships
+        $query = Jurnal::with(['anak_pkl', 'feedbacks.mentor']);
+
+        if ($user->id_mentor) {
+            // For mentors: Show journals where they have given feedback
+            // or journals from students they mentor
+            $query->where(function ($q) use ($user) {
+                $q->whereHas('feedbacks', function ($query) use ($user) {
+                    $query->where('id_mentor', $user->id_mentor);
+                })
+                    ->orWhereHas('anak_pkl', function ($query) use ($user) {
+                        $query->where('id_mentor', $user->id_mentor);
+                    });
+            });
+        } else if ($user->hasRole('Admin')) {
+            $query = Jurnal::with(['anak_pkl', 'feedbacks.mentor']);
+        } else if ($user->hasRole('anak-pkl')) {
+            $query->where('id_anak_pkl', $user->id_anak_pkl);
+        }
+
+        // Order by latest journal date
+        $jurnal = $query->orderBy('tanggal_jurnal', 'desc')
+            ->orderBy('waktu_mulai_aktifitas', 'desc')
+            ->paginate(10);
+
 
         return view('jurnal.index', compact('jurnal'));
     }
+
+    // public function index(): View
+    // {
+    //     // data yang di 
+    //     // $jurnal = Jurnal::with('feedbacks.mentor')->paginate(10);
+    //     // Mendapatkan pengguna yang sedang login
+    //     $user = auth()->user();
+
+    //     // Query jurnal
+    //     $jurnal = Jurnal::with('feedbacks');
+
+    //     // Filter jika pengguna memiliki id_mentor
+    //     if ($user->id_mentor) {
+    //         $jurnal = Jurnal::query()
+    //             ->leftJoin('feedback', 'jurnal.id_jurnal', '=', 'feedback.id_jurnal')
+    //             ->leftJoin('mentor', 'feedback.id_mentor', '=', 'mentor.id_mentor')
+    //             ->select('jurnal.*') // Ambil hanya kolom jurnal
+    //             ->when($user->id_mentor, function ($query) use ($user) {
+    //                 $query->where('mentor.id_mentor', $user->id_mentor);
+    //             })
+    //             ->distinct()
+    //             ->paginate(10);
+    //     } else {
+    //         $jurnal = Jurnal::with('feedbacks');
+    //     }
+
+    //     // Paginate hasil
+    //     // $jurnal = $jurnal->paginate(10);
+
+    //     return view('jurnal.index', compact('jurnal'));
+    // }
 
     public function create(): View
     {
@@ -50,7 +108,7 @@ class JurnalController extends Controller implements HasMiddleware
             'tanggal_jurnal' => 'required|date',
             'waktu_mulai_aktifitas' => 'required',
             'waktu_selesai_aktifitas' => 'required',
-            'durasi' => 'required|integer|min:0',
+            // 'durasi' => 'required|integer|min:0',
             'keterangan' => 'nullable|string|max:255'
         ]);
 
@@ -109,7 +167,7 @@ class JurnalController extends Controller implements HasMiddleware
             'tanggal_jurnal' => 'required|date',
             'waktu_mulai_aktifitas' => 'required',
             'waktu_selesai_aktifitas' => 'required',
-            'durasi' => 'required|integer|min:0',
+            // 'durasi' => 'required|integer|min:0',
             'keterangan' => 'required|string|max:255',
         ]);
 
@@ -161,5 +219,20 @@ class JurnalController extends Controller implements HasMiddleware
 
         return redirect()->route('jurnal.index')
             ->with('success', 'Jurnal berhasil dihapus');
+    }
+
+    public function addFeedback(Request $request, Jurnal $jurnal)
+    {
+        // if (auth()->user()->hasRole('mentor')) {
+        Feedback::create([
+            'id_jurnal' => $jurnal->id_jurnal,
+            'id_anak_pkl' => $jurnal->id_anak_pkl,
+            'id_mentor' => "01jgn9fzs4kbd80d7xg48z09qd",
+            'tanggal_feedback' => now(),
+            'isi_feedback' => $request->feedback
+        ]);
+        return redirect()->back()->with('success', 'Feedback berhasil ditambahkan');
+        // }
+        // return redirect()->back()->with('error', 'Anda tidak memiliki akses');
     }
 }

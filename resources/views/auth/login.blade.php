@@ -54,14 +54,13 @@
                                     <img src="{{ asset('assets/img/logo/logosmpmugaygy.png') }}" alt=""
                                         height="50px">
                                 </span>
-                                <span class="app-brand-text demo text-heading fw-bold">Login pendaftar Tryout</span>
+                                <span class="app-brand-text demo text-heading fw-bold">Login</span>
                             </a>
                         </div>
 
                         <!-- /Logo -->
                         <h4 class="mb-1">Selamat datang!</h4>
-                        <p class="mb-6">Silahkan Login untuk melihat status pembayaran dan mengunduh/mencetak kartu
-                            peserta.</p>
+                        <p class="mb-6">Sistem Logbook PKL/Magang Prabubima Tech.</p>
 
                         <x-error-list />
 
@@ -98,8 +97,8 @@
                         </form>
 
                         <p class="text-center">
-                            <span>Peserta Baru?</span>
-                            <a href="{{ url('/') }}">
+                            <span>Belum Memiliki Akun?</span>
+                            <a href="{{ url('/register') }}">
                                 <span>Daftar</span>
                             </a>
                         </p>

@@ -74,7 +74,7 @@ class Jurnal extends Model
 		return $this->belongsTo(Mentor::class, 'id_mentor');
 	}
 
-	public function feedback()
+	public function feedbacks()
 	{
 		return $this->hasMany(Feedback::class, 'id_jurnal');
 	}

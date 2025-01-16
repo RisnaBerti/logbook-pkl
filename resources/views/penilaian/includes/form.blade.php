@@ -41,14 +41,13 @@
                     <tr>
                         <th>Keterampilan</th>
                         <th>Nilai</th>
-                        <th>Keterangan</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="penilaian-rows">
                     <tr class="penilaian-row">
                         <td>
-                            <select name="penilaian[0][id_keterampilan]" class="form-select">
+                            <select name="detail_penilaian[0][id_keterampilan]" class="form-select">
                                 <option value="">Pilih Keterampilan</option>
                                 @foreach ($keterampilan as $k)
                                     <option value="{{ $k->id_keterampilan }}"
@@ -59,16 +58,15 @@
                             </select>
                         </td>
                         <td>
-                            <x-input.currency name="penilaian[0][nilai]" placeholder="Nilai" class="form-control"
-                                min="0" max="100" step="1" value="{{ old('nilai', $penilaian?->nilai) }}"/>
-                        </td>
-                        <td>
-                            <input type="text" name="penilaian[0][keterangan]" class="form-control"
-                                placeholder="Keterangan" value="{{ old('keterangan', $penilaian?->keterangan) }}">
+                            {{-- <x-input.currency name="detail_penilaian[0][nilai]" placeholder="Nilai" class="form-control"
+                                min="0" max="100" step="1" /> --}}
+                            <input type="number" name="detail_penilaian[0][nilai]" placeholder="Nilai"
+                                class="form-control" min="0" max="100"
+                                step="1">
                         </td>
                         <td>
                             <button type="button" class="btn btn-danger btn-sm remove-row" disabled>
-                                <i class="bi bi-trash"></i>
+                                <i class="bx bx-trash"></i>
                             </button>
                         </td>
                     </tr>
@@ -83,15 +81,12 @@
         </div>
 
         <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary me-2">Perbarui</button>
+            <button type="submit" class="btn btn-primary me-2">Simpan Penilaian</button>
             <a href="{{ route('penilaian.index') }}" class="btn btn-secondary">Kembali</a>
         </div>
-
-        {{-- <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary">Simpan Penilaian</button>
-        </div> --}}
     </div>
 </div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const container = document.getElementById('penilaian-rows');
@@ -99,133 +94,117 @@
         const form = document.querySelector('form');
         let rowIndex = document.querySelectorAll('.penilaian-row').length - 1;
 
-        // Function to initialize currency input
-        function initializeCurrencyInput(element) {
-            element.addEventListener('input', function(e) {
-                let value = this.value.replace(/\D/g, "");
-                this.value = new Intl.NumberFormat('id-ID').format(value);
+        // Fungsi untuk memeriksa duplikasi keterampilan
+        function checkDuplicateKeterampilan() {
+            const keterampilanSelects = container.querySelectorAll('select[name*="[id_keterampilan]"]');
+            const selectedValues = new Set();
+            let hasDuplicate = false;
 
-                let hiddenInput = this.nextElementSibling;
-                if (hiddenInput && hiddenInput.type === 'hidden') {
-                    hiddenInput.value = value ? parseInt(value) : 0;
+            keterampilanSelects.forEach(select => {
+                select.classList.remove('is-invalid');
+                if (select.value) {
+                    if (selectedValues.has(select.value)) {
+                        select.classList.add('is-invalid');
+                        hasDuplicate = true;
+                    }
+                    selectedValues.add(select.value);
                 }
             });
+
+            return hasDuplicate;
         }
 
-        // Initialize existing currency inputs
-        document.querySelectorAll('input[data-type="currency"]').forEach(input => {
-            initializeCurrencyInput(input);
-        });
-
-        // Function to add new row
+        // Fungsi untuk menambahkan baris baru
         addButton.addEventListener('click', function() {
             rowIndex++;
             const newRow = container.querySelector('.penilaian-row').cloneNode(true);
 
-            // Update all input names and clear values
-            newRow.querySelectorAll('[name]').forEach(element => {
-                const originalName = element.name;
-                // Update name attribute with new index
-                element.name = element.name.replace(/\[\d+\]/, `[${rowIndex}]`);
-
-                // Handle currency input display and hidden input
-                if (element.hasAttribute('data-type') && element.getAttribute('data-type') ===
-                    'currency') {
-                    // Reset display value
-                    element.value = '0';
-                    // Generate new unique ID
-                    const newId = 'input-currency-' + Math.random().toString(36).substring(2,
-                        15);
-                    element.id = newId;
-
-                    // Re-initialize currency input
-                    initializeCurrencyInput(element);
-                } else if (element.type === 'hidden' && element.classList.contains(
-                        'hidden-nominal')) {
-                    // Reset hidden input value
-                    element.value = '0';
-                } else {
-                    // Reset other inputs
-                    element.value = '';
+            // Reset input di baris baru
+            newRow.querySelectorAll('input, select').forEach((input) => {
+                if (input.name) {
+                    input.name = input.name.replace(/\[\d+\]/, `[${rowIndex}]`);
                 }
-
-                element.classList.remove('is-invalid');
+                if (input.type === 'text' || input.type === 'number') {
+                    input.value = '';
+                } else if (input.tagName === 'SELECT') {
+                    input.selectedIndex = 0;
+                }
+                input.classList.remove('is-invalid');
             });
 
-            // Enable and setup remove button
+            // Aktifkan tombol hapus pada baris baru
             const removeButton = newRow.querySelector('.remove-row');
             removeButton.disabled = false;
             removeButton.addEventListener('click', function() {
                 if (confirm('Apakah Anda yakin ingin menghapus baris ini?')) {
                     newRow.remove();
+                    checkDuplicateKeterampilan();
                 }
             });
 
             container.appendChild(newRow);
         });
 
-        // Form validation before submit
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
+        // Event listener untuk perubahan pada select keterampilan
+        container.addEventListener('change', function(e) {
+            if (e.target.name && e.target.name.includes('[id_keterampilan]')) {
+                checkDuplicateKeterampilan();
+            }
+        });
 
-            const rows = document.querySelectorAll('.penilaian-row');
+        // Validasi form sebelum submit
+        form.addEventListener('submit', function(event) {
             let isValid = true;
             let errorMessage = '';
 
-            // Validate mentor and anak PKL selection
+            // Validasi mentor dan anak PKL
             const mentorSelect = document.getElementById('id_mentor');
             const anakPklSelect = document.getElementById('id_anak_pkl');
 
             if (!mentorSelect.value) {
                 mentorSelect.classList.add('is-invalid');
-                errorMessage += '- Pilih Mentor\n';
+                errorMessage += '- Pilih Mentor.\n';
                 isValid = false;
             }
 
             if (!anakPklSelect.value) {
                 anakPklSelect.classList.add('is-invalid');
-                errorMessage += '- Pilih Anak PKL\n';
+                errorMessage += '- Pilih Anak PKL.\n';
                 isValid = false;
             }
 
-            // Validate each row
+            // Cek duplikasi keterampilan
+            if (checkDuplicateKeterampilan()) {
+                errorMessage += '- Terdapat keterampilan yang duplikat.\n';
+                isValid = false;
+            }
+
+            // Validasi setiap baris penilaian
+            const rows = container.querySelectorAll('.penilaian-row');
             rows.forEach((row, index) => {
-                const keterampilan = row.querySelector(
-                    'select[name^="penilaian"][name$="[id_keterampilan]"]');
-                const nilaiHidden = row.querySelector(
-                    'input[name^="penilaian"][name$="[nilai]"]');
-                const keterangan = row.querySelector(
-                    'input[name^="penilaian"][name$="[keterangan]"]');
+                const keterampilan = row.querySelector('select[name*="[id_keterampilan]"]');
+                const nilai = row.querySelector('input[name*="[nilai]"]');
 
-                if (!keterampilan.value) {
+                if (!keterampilan || !keterampilan.value) {
                     keterampilan.classList.add('is-invalid');
-                    errorMessage += `- Pilih Keterampilan pada baris ${index + 1}\n`;
+                    errorMessage += `- Pilih Keterampilan pada baris ${index + 1}.\n`;
                     isValid = false;
                 }
 
-                const nilaiValue = parseInt(nilaiHidden.value);
-                if (isNaN(nilaiValue) || nilaiValue < 0 || nilaiValue > 100) {
-                    const nilaiDisplay = row.querySelector('input[data-type="currency"]');
-                    if (nilaiDisplay) nilaiDisplay.classList.add('is-invalid');
-                    errorMessage += `- Masukkan Nilai valid (0-100) pada baris ${index + 1}\n`;
-                    isValid = false;
-                }
-
-                if (keterangan.value && keterangan.value.length > 255) {
-                    keterangan.classList.add('is-invalid');
-                    errorMessage += `- Keterangan terlalu panjang pada baris ${index + 1}\n`;
+                if (!nilai || isNaN(nilai.value) || nilai.value < 0 || nilai.value > 100) {
+                    nilai.classList.add('is-invalid');
+                    errorMessage += `- Masukkan nilai valid (0-100) pada baris ${index + 1}.\n`;
                     isValid = false;
                 }
             });
 
             if (!isValid) {
                 alert('Mohon perbaiki error berikut:\n' + errorMessage);
-            } else {
-                form.submit();
+                event.preventDefault();
             }
         });
 
-        // Remove validation styling on input change
+        // Hapus kelas is-invalid saat input berubah
         document.addEventListener('input', function(e) {
             if (e.target.classList.contains('is-invalid')) {
                 e.target.classList.remove('is-invalid');

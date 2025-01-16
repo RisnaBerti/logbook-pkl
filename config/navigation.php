@@ -28,7 +28,7 @@ $nav = [
                     "route" => 'periode-pkl.index',
                     "permissions" => ["periode-pkl view"],
                 ],
-                
+
             ],
         ],
         [
@@ -44,16 +44,9 @@ $nav = [
             "group" => "",
             "route" => 'anak-pkl.index',
             "permissions" => ["anak-pkl view"],
-        ],  
-        [
-            "title" => "Sertifikat",
-            "icon" => '<i class="menu-icon tf-icons bx bx-receipt"></i>',
-            "group" => "",
-            "route" => 'sertifikat.index',
-            "permissions" => ["sertifikat view"],
         ],
         [
-            "title" => "Jurnal PKL",
+            "title" => "Jurnal",
             "icon" => '<i class="menu-icon tf-icons bx bx-receipt"></i>',
             "group" => "",
             "route" => 'jurnal.index',
@@ -73,7 +66,31 @@ $nav = [
             "route" => 'penilaian.index',
             "permissions" => ["penilaian view"],
         ],
-        
+        [
+            "title" => "Sertifikat",
+            "icon" => '<i class="menu-icon tf-icons bx bx-receipt"></i>',
+            "group" => "",
+            "route" => 'sertifikat.index',
+            "permissions" => ["sertifikat view"],
+        ],
+        [
+            "title" => "Laporan",
+            "icon" => '<i class="menu-icon tf-icons bx bx-receipt"></i>',
+            "group" => "",
+            "submenus" => [
+                [
+                    'title' => 'Laporan Jurnal',
+                    "route" => 'laporan.jurnal',
+                    "permissions" => ["laporan jurnal view"],
+                ],
+                // [
+                //     'title' => 'Roles',
+                //     'route' => 'roles.index',
+                //     // 'route' => null,
+                //     'permissions' => ['role & permission view']
+                // ],
+            ],
+        ],
         [
             "title" => "Manajemen Users",
             "icon" => '<i class="menu-icon tf-icons bx bx-lock-open-alt"></i>',

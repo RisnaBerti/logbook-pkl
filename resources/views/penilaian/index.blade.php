@@ -18,36 +18,37 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Anak Pkl</th>
+                                <th class="text-nowrap">Anak Pkl</th>
                                 <th>Mentor</th>
-                                <th>Tanggal Penilaian</th>
+                                <th class="text-nowrap">Tanggal Penilaian</th>
+                                <th class="text-nowrap">Nilai Rata - Rata</th>
+                                <th>Keterangan</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($penilaian->groupBy('anak_pkl.id_anak_pkl') as $anakPklId => $nilaiGroup)
-                                @php
-                                    $firstNilai = $nilaiGroup->first();
-                                @endphp
+                            @foreach ($penilaian as $item)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $firstNilai->anak_pkl?->nama_anak_pkl }}</td>
-                                    <td>{{ $firstNilai->mentor?->nama_mentor }}</td>
-                                    <td>{{ now()->parse($firstNilai?->tanggal_penilaian)->format('d M Y') }}</td>
+                                    <td>{{ $item->anak_pkl?->nama_anak_pkl }}</td>
+                                    <td>{{ $item->mentor?->nama_mentor }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($item->tanggal_penilaian)->format('d M Y') }}</td>
+                                    <td>{{ $item->nilai_rata_rata }}</td>
+                                    <td>{{ $item->keterangan }}</td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
                                             <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#detailModal{{ $anakPklId }}">
+                                                data-bs-target="#detailModal{{ $item->id_penilaian }}">
                                                 <span class="bx bx-info-circle me-1"></span>Detail Nilai
                                             </button>
                                             @can('penilaian edit')
-                                                <a href="{{ route('penilaian.edit', $firstNilai) }}"
+                                                <a href="{{ route('penilaian.edit', $item) }}"
                                                     class="btn btn-primary btn-sm ms-1">
                                                     <span class="bx bx-pencil me-1"></span>Edit
                                                 </a>
                                             @endcan
                                             @can('penilaian delete')
-                                                <form action="{{ route('penilaian.destroy', $firstNilai) }}" method="POST"
+                                                <form action="{{ route('penilaian.destroy', $item) }}" method="POST"
                                                     class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
@@ -60,13 +61,13 @@
                                         </div>
 
                                         <!-- Modal Detail -->
-                                        <div class="modal fade" id="detailModal{{ $anakPklId }}" tabindex="-1"
+                                        <div class="modal fade" id="detailModal{{ $item->id_penilaian }}" tabindex="-1"
                                             aria-hidden="true">
                                             <div class="modal-dialog modal-lg">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title">Detail Nilai -
-                                                            {{ $firstNilai->anak_pkl?->nama_anak_pkl }}</h5>
+                                                            {{ $item->anak_pkl?->nama_anak_pkl }}</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
@@ -77,22 +78,22 @@
                                                                     <th>No</th>
                                                                     <th>Keterampilan</th>
                                                                     <th>Nilai</th>
-                                                                    <th>Keterangan</th>
+                                                                    {{-- <th>Keterangan</th> --}}
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                @foreach ($nilaiGroup as $index => $nilai)
+                                                                @foreach ($item->detail as $detail)
                                                                     <tr>
-                                                                        <td>{{ $index + 1 }}</td>
-                                                                        <td>{{ $nilai->keterampilan?->nama_keterampilan }}
+                                                                        <td>{{ $loop->iteration }}</td>
+                                                                        <td>{{ $detail->keterampilan?->nama_keterampilan }}
                                                                         </td>
                                                                         <td class="text-center">
                                                                             <span
-                                                                                class="badge bg-{{ $nilai->nilai >= 76 ? 'success' : 'danger' }}">
-                                                                                {{ $nilai->nilai }}
+                                                                                class="badge bg-{{ $detail->nilai >= 76 ? 'success' : 'danger' }}">
+                                                                                {{ $detail->nilai }}
                                                                             </span>
                                                                         </td>
-                                                                        <td>{{ $nilai->keterangan }}</td>
+                                                                        {{-- <td>{{ $detail->keterangan }}</td> --}}
                                                                     </tr>
                                                                 @endforeach
                                                             </tbody>
@@ -112,11 +113,12 @@
                     </table>
                 </div>
 
-                {{-- Pagination --}}
+                <!-- Pagination -->
                 <div class="mt-3 d-flex justify-content-end">
                     {!! $penilaian->withQueryString()->links() !!}
                 </div>
             </div>
+
         </div>
     </div>
 </x-layouts.app>

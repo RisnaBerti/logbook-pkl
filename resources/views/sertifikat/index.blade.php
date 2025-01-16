@@ -1,12 +1,9 @@
 <x-layouts.app title="Sertifikat" activeMenu="sertifikat">
     <div class="my-5 container-fluid">
-        <x-breadcrumb title="Sertifikat" :breadcrumbs="[
-            ['label' => 'Dashboard', 'url' => url('/')],
-            ['label' => 'Sertifikat'],
-        ]" />
+        <x-breadcrumb title="Sertifikat" :breadcrumbs="[['label' => 'Dashboard', 'url' => url('/')], ['label' => 'Sertifikat']]" />
 
         <x-bs-toast />
-        
+
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 @can('sertifikat create')
@@ -21,12 +18,9 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                
-                                    <th>Id Anak Pkl</th>
-                                    <th>Judul Sertifikat</th>
-                                    <th>Nama Pengesah</th>
-                                    <th>Tanggal Sertifikat</th>
-                                    <th>Keterangan</th>
+                                <th>Anak Pkl</th>
+                                <th>Tanggal Sertifikat</th>
+                                <th>Keterangan</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -34,20 +28,26 @@
                             @foreach ($sertifikat as $row)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    
-                                        <td>{{ $row?->id_anak_pkl }}</td>
-                                        <td>{{ $row?->judul_sertifikat }}</td>
-                                        <td>{{ $row?->nama_pengesah }}</td>
-                                        <td>{{ $row?->tanggal_sertifikat }}</td>
-                                        <td>{{ $row?->keterangan }}</td>
+                                    <td>{{ $row->anak_pkl?->nama_anak_pkl }}</td>
+                                    <td>{{ now()->parse($row?->tanggal_sertifikat)->format('d M Y') }}</td>
+                                    <td>{{ $row?->keterangan }}</td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
                                             @can('sertifikat view')
                                                 <div class="me-1">
+                                                    <a href="{{ route('sertifikat.view-sertifikat', $row) }}"
+                                                        class="btn btn-icon btn-outline-primary btn-sm"
+                                                        data-bs-toggle="tooltip" data-bs-title="Sertifikat"
+                                                        data-bs-placement="top">
+                                                        <span class="bx bx-archive"></span>
+                                                    </a>
+                                                </div>
+                                            @endcan
+                                            @can('sertifikat view')
+                                                <div class="me-1">
                                                     <a href="{{ route('sertifikat.show', $row) }}"
                                                         class="btn btn-icon btn-outline-info btn-sm"
-                                                        data-bs-toggle="tooltip"
-                                                        data-bs-title="Detail"
+                                                        data-bs-toggle="tooltip" data-bs-title="Detail"
                                                         data-bs-placement="top">
                                                         <span class="bx bx-show"></span>
                                                     </a>
@@ -64,18 +64,13 @@
                                                 </div>
                                             @endcan
                                             @can('sertifikat delete')
-                                                <form action="{{ route('sertifikat.destroy', $row) }}"
-                                                    method="POST" class="d-inline"
+                                                <form action="{{ route('sertifikat.destroy', $row) }}" method="POST"
+                                                    class="d-inline" @csrf @method('DELETE') <x-input.confirm-button
+                                                    text="Data sertifikat ini akan dihapus!" positive="Ya, hapus!"
+                                                    icon="info" class="btn btn-icon btn-outline-danger btn-sm"
+                                                    data-bs-toggle="tooltip" data-bs-title="Hapus" data-bs-placement="top">
                                                     @csrf
-                                                    @method('DELETE')
-                                                    <x-input.confirm-button text="Data sertifikat ini akan dihapus!"
-                                                        positive="Ya, hapus!" icon="info"
-                                                        class="btn btn-icon btn-outline-danger btn-sm"
-                                                        data-bs-toggle="tooltip"
-                                                        data-bs-title="Hapus"
-                                                        data-bs-placement="top">
-                                                         @csrf
-                                                        <span class="bx bx-trash"></span>
+                                                    <span class="bx bx-trash"></span>
                                                     </x-input.confirm-button>
                                                 </form>
                                             @endcan

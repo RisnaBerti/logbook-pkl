@@ -255,6 +255,15 @@ return [
             ]
         ],
         [
+            'group' => 'detail penilaian',
+            'access' => [
+                'detail-penilaian view',
+                'detail-penilaian create',
+                'detail-penilaian edit',
+                'detail-penilaian delete',
+            ]
+        ],
+        [
             'group' => 'jurnal',
             'access' => [
                 'jurnal view',
@@ -288,6 +297,13 @@ return [
                 'sertifikat create',
                 'sertifikat edit',
                 'sertifikat delete',
+            ]
+        ],
+        [
+            'group' => 'laporan',
+            'access' => [
+                'laporan jurnal view',
+                'laporan jurnal download',
             ]
         ],
     ]

@@ -27,10 +27,33 @@ class FeedbackController extends Controller implements HasMiddleware
 
     public function index(): View
     {
-        $feedback = Feedback::paginate(10);
-        
+        $user = auth()->user();
+
+        // Base query with relationships
+        $query = Feedback::with('mentor');
+
+        if ($user->id_mentor) {
+            $query->where('id_mentor', $user->id_mentor);
+        } else if ($user->hasRole('Admin')) {
+            $feedback = Feedback::paginate(10);
+        } else if ($user->hasRole('anak-pkl')) {
+            $query->where('id_anak_pkl', $user->id_anak_pkl);
+        }
+
+        // Order by latest journal date
+        $feedback = $query->orderBy('tanggal_feedback', 'desc')
+            ->paginate(10);
+
+
         return view('feedback.index', compact('feedback'));
     }
+
+    // public function index(): View
+    // {
+    //     $feedback = Feedback::paginate(10);
+
+    //     return view('feedback.index', compact('feedback'));
+    // }
 
     public function create(): View
     {
@@ -39,17 +62,17 @@ class FeedbackController extends Controller implements HasMiddleware
         $jurnal = Jurnal::all();
         $anak_pkl = AnakPkl::all();
 
-        return view('feedback.create', compact('feedback', 'mentor', 'jurnal', 'anak_pkl' ));
+        return view('feedback.create', compact('feedback', 'mentor', 'jurnal', 'anak_pkl'));
     }
 
     public function store(Request $request): RedirectResponse
     {
         $validatedData = $request->validate([
-            	'id_anak_pkl' => 'required|string|max:36',
-	'id_mentor' => 'required|string|max:36',
-	'id_jurnal' => 'required|string|max:36',
-	'tanggal_feedback' => 'required|date',
-	'isi_feedback' => 'required|string|max:255',
+            'id_anak_pkl' => 'required|string|max:36',
+            'id_mentor' => 'required|string|max:36',
+            'id_jurnal' => 'required|string|max:36',
+            'tanggal_feedback' => 'required|date',
+            'isi_feedback' => 'required|string|max:255',
         ]);
 
         try {
@@ -82,13 +105,13 @@ class FeedbackController extends Controller implements HasMiddleware
     public function update(Request $request, $id): RedirectResponse
     {
         $feedback = Feedback::find($id);
-        
+
         $validatedData = $request->validate([
-            	'id_anak_pkl' => 'required|string|max:36',
-	'id_mentor' => 'required|string|max:36',
-	'id_jurnal' => 'required|string|max:36',
-	'tanggal_feedback' => 'required|date',
-	'isi_feedback' => 'required|string|max:255',
+            'id_anak_pkl' => 'required|string|max:36',
+            'id_mentor' => 'required|string|max:36',
+            'id_jurnal' => 'required|string|max:36',
+            'tanggal_feedback' => 'required|date',
+            'isi_feedback' => 'required|string|max:255',
         ]);
 
         try {
@@ -112,14 +135,14 @@ class FeedbackController extends Controller implements HasMiddleware
             Feedback::destroy($id);
         } catch (\Illuminate\Database\QueryException $e) {
             if ($e->getCode() == '23000') {
-                return redirect()->route('feedback.index')
+                return redirect()->route('jurnal.index')
                     ->with('error', 'Data feedback ini sudah digunakan dan tidak dapat dihapus.');
             }
-            return redirect()->route('feedback.index')
+            return redirect()->route('jurnal.index')
                 ->with('error', 'Terjadi kesalahan saat menghapus data.');
         }
 
-        return redirect()->route('feedback.index')
+        return redirect()->route('jurnal.index')
             ->with('success', 'Feedback berhasil dihapus');
     }
 }

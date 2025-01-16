@@ -40,8 +40,8 @@ class Sertifikat extends Model
 
 	protected $fillable = [
 		'id_anak_pkl',
-		'judul_sertifikat',
-		'nama_pengesah',
+		'sertifikat_depan',
+		'sertifikat_belakang',
 		'tanggal_sertifikat',
 		'keterangan'
 	];

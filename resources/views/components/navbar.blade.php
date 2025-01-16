@@ -4,9 +4,9 @@
             <span class="app-brand-logo demo">
             </span>
             <div class="app-brand-text demo menu-text ms-2" style="font-size: 20px;">
-                <span class="fw-bold">ORAN HR</span>
+                <span class="fw-bold">Logbook PKL</span>
                 <br>
-                <small class="fw-semibold">Backend Landing Page Oran HR </small>
+                <small class="fw-semibold">by Team Prabubima Tech</small>
             </div>
         </a>
 
