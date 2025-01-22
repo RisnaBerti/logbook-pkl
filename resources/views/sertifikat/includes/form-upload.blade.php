@@ -4,13 +4,11 @@
             <label for="id_anak_pkl" class="form-label">Anak PKL</label>
             <select name="id_anak_pkl" class="form-select {{ $errors->has('id_anak_pkl') ? 'is-invalid' : '' }}"
                 id="id_anak_pkl">
-                <option value="">Pilih Anak PKL</option>
-                @foreach ($anakPkl as $anak)
-                    <option value="{{ $anak->id_anak_pkl }}"
-                        {{ old('id_anak_pkl', $sertifikat?->id_anak_pkl) == $anak->id_anak_pkl ? 'selected' : '' }}>
-                        {{ $anak->nama_anak_pkl }}
+                {{-- @foreach ($anakPkl as $anak) --}}
+                    <option value="{{ $anakPkl->id_anak_pkl }}" readonly>
+                        {{ $anakPkl->nama_anak_pkl }}
                     </option>
-                @endforeach
+                {{-- @endforeach --}}
             </select>
             @error('id_anak_pkl')
                 <small class="invalid-feedback">{{ $message }}</small>
@@ -51,15 +49,6 @@
                 id="sertifikat_belakang" value="{{ old('sertifikat_belakang', $sertifikat?->sertifikat_belakang) }}"
                 placeholder="Masukkan Sertifikat Belakang" />
             @error('sertifikat_belakang')
-                <small class="invalid-feedback">{{ $message }}</small>
-            @enderror
-        </div>
-        <div class="mb-4">
-            <label for="keterangan" class="form-label">Keterangan</label>
-            <input type="text" name="keterangan"
-                class="form-control {{ $errors->has('keterangan') ? 'is-invalid' : '' }}" id="keterangan"
-                value="{{ old('keterangan', $sertifikat?->keterangan) }}" placeholder="Masukkan Keterangan" readonly />
-            @error('keterangan')
                 <small class="invalid-feedback">{{ $message }}</small>
             @enderror
         </div>

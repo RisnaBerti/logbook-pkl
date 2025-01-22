@@ -19,7 +19,7 @@
                             <div class="card-body">
                                 <div class="position-relative">
                                     @if ($sertifikat?->sertifikat_depan)
-                                        <img src="{{ $sertifikat?->sertifikat_depan ? 'data:image/jpeg;base64,' . base64_encode(Storage::disk('public')->get('sertifikat/' . $sertifikat->sertifikat_depan)) : '' }}"
+                                        <img src="{{ asset('storage/sertifikat/' . $sertifikat->sertifikat_depan) }}"
                                             alt="Sertifikat Depan" class="img-fluid rounded">
                                     @else
                                         <span>Tidak ada Sertifikat</span>
@@ -37,7 +37,7 @@
                             </div>
                             <div class="card-body">
                                 @if ($sertifikat?->sertifikat_belakang)
-                                    <img src="{{ asset('storage/sertifikat/' . $sertifikat?->sertifikat_belakang) }}"
+                                    <img src="{{ asset('storage/sertifikat/' . $sertifikat->sertifikat_belakang) }}"
                                         alt="Sertifikat Belakang" class="img-fluid rounded">
                                 @else
                                     <span>Tidak ada Sertifikat</span>
@@ -53,10 +53,10 @@
                         <button class="btn btn-primary me-2" onclick="window.print()">
                             <i class="bx bx-printer me-1"></i>Cetak Sertifikat
                         </button>
-                        <a href="{{ route('sertifikat.download', $sertifikat?->id_sertifikat) }}"
+                        {{-- <a href="{{ route('sertifikat.download', $sertifikat?->id_sertifikat) }}"
                             class="btn btn-success">
                             <i class="bx bx-download me-1"></i>Unduh Sertifikat
-                        </a>
+                        </a> --}}
                     </div>
                 </div>
 

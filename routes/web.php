@@ -65,6 +65,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/sertifikat/view-sertifikat/{id}', [SertifikatController::class, 'viewSertifikat'])->name('sertifikat.view-sertifikat');
     Route::get('/sertifikat/download/{id}', [SertifikatController::class, 'downloadSertifikat'])->name('sertifikat.download');
+    Route::get('/sertifikat/upload/{id}', [SertifikatController::class, 'upload'])->name('sertifikat.upload-view');
+    Route::put('/sertifikat/upload/{id}', [SertifikatController::class, 'uploadSertifikat'])->name('sertifikat.upload');
 
     Route::get('/penilain/view-sertifikat/{id}', [PenilaianController::class, 'viewSertifikat'])->name('penilaian.view-sertifikat');
     Route::get('/laporan/jurnal', [LaporanController::class, 'laporanJurnal'])->name('laporan.jurnal');

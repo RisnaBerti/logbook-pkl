@@ -23,6 +23,7 @@
                                 <th class="text-nowrap">Tanggal Penilaian</th>
                                 <th class="text-nowrap">Nilai Rata - Rata</th>
                                 <th>Grade</th>
+                                <th class="text-center">Sertifikat</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -47,6 +48,34 @@
                                             <span>{{ $item->grade }}</span>
                                         @endif
                                     </td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            {{-- @can('sertifikat view')
+                                                <div class="me-1">
+                                                    <a href="{{ route('sertifikat.show', $row) }}"
+                                                        class="btn btn-icon btn-outline-info btn-sm"
+                                                        data-bs-toggle="tooltip" data-bs-title="Detail"
+                                                        data-bs-placement="top">
+                                                        <span class="bx bx-show"></span>
+                                                    </a>
+                                                </div>
+                                            @endcan --}}
+                                            @can('penilaian view')
+                                                <a href="{{ route('sertifikat.view-sertifikat', $item->id_anak_pkl) }}"
+                                                    class="btn btn-primary btn-sm ms-1" data-bs-toggle="tooltip"
+                                                    data-bs-title="Lihat Sertifikat">
+                                                    <span class="bx bx-archive"></span>
+                                                </a>
+                                            @endcan
+                                            @can('sertifikat upload')
+                                                <a href="{{ route('sertifikat.upload-view', $item->id_anak_pkl) }}"
+                                                    class="btn btn-warning btn-sm ms-1" data-bs-toggle="tooltip"
+                                                    data-bs-title="Upload Sertifikat">
+                                                    <span class="bx bx-upload"></span>
+                                                </a>
+                                            @endcan
+                                        </div>
+                                    </td>
                                     {{-- <td>{{ $item->keterangan }}</td> --}}
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
@@ -57,13 +86,7 @@
                                                     <span class="bx bx-info-circle me-1"></span>
                                                 </button>
                                             @endcan
-                                            @can('penilaian view')
-                                                <a href="{{ route('penilaian.view-sertifikat', $item->id_anak_pkl) }}"
-                                                    class="btn btn-warning btn-sm ms-1" data-bs-toggle="tooltip"
-                                                    data-bs-title="Sertifikat">
-                                                    <span class="bx bx-archive"></span>
-                                                </a>
-                                            @endcan
+
                                             @can('penilaian edit')
                                                 <a href="{{ route('penilaian.edit', $item) }}"
                                                     class="btn btn-primary btn-sm ms-1" data-bs-toggle="edit">

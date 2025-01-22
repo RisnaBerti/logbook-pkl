@@ -297,6 +297,7 @@ return [
                 'sertifikat create',
                 'sertifikat edit',
                 'sertifikat delete',
+                'sertifikat upload',
             ]
         ],
         [

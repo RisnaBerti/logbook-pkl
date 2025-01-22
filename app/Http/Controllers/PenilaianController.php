@@ -110,6 +110,13 @@ class PenilaianController extends Controller implements HasMiddleware
                     'nilai' => $detail['nilai']
                 ]);
             }
+
+            //simpan juga data sertifikat
+            $sertifikat = new Sertifikat();
+            $sertifikat->id_anak_pkl =  $request->id_anak_pkl;
+            $sertifikat->keterangan = $grade;
+            $sertifikat->save();
+
         } catch (\Illuminate\Database\QueryException $e) {
             return redirect()->route('penilaian.index')
                 ->with('error', 'Terjadi kesalahan saat membuat data.');

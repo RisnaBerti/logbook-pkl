@@ -262,4 +262,89 @@ class SertifikatController extends Controller implements HasMiddleware
         $filePath = public_path('storage/' . $fileName);
         return response()->download($filePath);
     }
+
+    //upload
+    public function upload($id): View
+    {
+        $sertifikat = Sertifikat::where('id_anak_pkl', $id)->first();
+        $anakPkl = AnakPkl::where('id_anak_pkl', $id)->first();
+
+        return view('sertifikat.upload', compact('sertifikat', 'anakPkl'));
+    }
+
+    public function uploadSertifikat(Request $request, $id)
+    {
+        // Pertama, pastikan anak PKL dengan ID tersebut ada
+        $anakPkl = AnakPkl::where('id_anak_pkl', $id)->first();
+
+        // if (!$anakPkl) {
+        //     return back()->with('error', 'Data Anak PKL tidak ditemukan');
+        // }
+
+        // Cari atau buat sertifikat baru
+        $sertifikat = Sertifikat::find($id);
+        // $sertifikat = Sertifikat::where('id_anak_pkl', $id);
+        // dd($sertifikat);
+
+        // Generate ID sertifikat jika baru
+        // if (!$sertifikat->exists) {
+        //     $sertifikat->id_sertifikat = Str::ulid(); // atau method generate ID yang Anda gunakan
+        // }
+
+        $validatedData = $request->validate([
+            'sertifikat_depan' => 'required|mimes:jpeg,png,jpg|max:2048',
+            'sertifikat_belakang' => 'required|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        if ($request->hasFile('sertifikat_depan') && $request->hasFile('sertifikat_belakang')) {
+            $sertifikatDepan = pathinfo($request->file('sertifikat_depan')->getClientOriginalName(), PATHINFO_FILENAME);
+            $sertifikatBelakang = pathinfo($request->file('sertifikat_belakang')->getClientOriginalName(), PATHINFO_FILENAME);
+
+            if ((strlen($sertifikatDepan) > 20) && (strlen($sertifikatBelakang) > 20)) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Nama file tidak boleh lebih dari 20 karakter.');
+            }
+
+            // Hapus file lama jika ada
+            if ($sertifikat->sertifikat_depan) {
+                Storage::delete('public/sertifikat/' . $sertifikat->sertifikat_depan);
+            }
+            if ($sertifikat->sertifikat_belakang) {
+                Storage::delete('public/sertifikat/' . $sertifikat->sertifikat_belakang);
+            }
+
+            // Upload file baru
+            $fileNameDepan = time() . '_depan.' . $request->file('sertifikat_depan')->getClientOriginalExtension();
+            $fileNameBelakang = time() . '_belakang.' . $request->file('sertifikat_belakang')->getClientOriginalExtension();
+
+            $request->file('sertifikat_depan')->storeAs('sertifikat', $fileNameDepan, 'public');
+            $request->file('sertifikat_belakang')->storeAs('sertifikat', $fileNameBelakang, 'public');
+
+            $sertifikat->sertifikat_depan = $fileNameDepan;
+            $sertifikat->sertifikat_belakang = $fileNameBelakang;
+        }
+
+        // Hitung nilai dan grade
+        $nilaiRataRata = Penilaian::where('id_anak_pkl', $id)->value('nilai_rata_rata') ?? 0;
+
+        $grade = match (true) {
+            $nilaiRataRata >= 90 && $nilaiRataRata <= 100 => 'Sangat Baik',
+            $nilaiRataRata >= 75 && $nilaiRataRata < 90 => 'Baik',
+            $nilaiRataRata >= 60 && $nilaiRataRata < 75 => 'Cukup',
+            default => 'Belum Memenuhi Kriteria'
+        };
+
+        // Update sertifikat
+        $sertifikat->tanggal_sertifikat = now();
+        $sertifikat->keterangan = $grade;
+        $sertifikat->save();
+
+        // Update status anak PKL
+        // $anakPkl->update(['status' => 0]);
+        AnakPkl::where('id_anak_pkl', $id)->update(['status' => 0]);
+
+        return redirect()->route('penilaian.index')
+            ->with('success', 'Sertifikat berhasil diupload');
+    }
 }
