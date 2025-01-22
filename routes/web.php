@@ -28,8 +28,6 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'doRegister']);
 
     Route::get('/', [AuthController::class, 'login'])->name('landing');
-    // Route::post('/tryout/daftar', [PesertaController::class, 'daftar'])->name('tryout.daftar');
-    // Route::get('/tryout/info-login', [PesertaController::class, 'infoLogin'])->name('tryout.info-login');
 });
 
 Route::middleware('auth')->group(function () {
