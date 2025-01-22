@@ -6,6 +6,7 @@ use App\Models\Mentor;
 use App\Models\AnakPkl;
 use App\Models\Penilaian;
 use Illuminate\View\View;
+use App\Models\Sertifikat;
 use App\Models\Keterampilan;
 use Illuminate\Http\Request;
 use App\Models\DetailPenilaian;
@@ -39,7 +40,7 @@ class PenilaianController extends Controller implements HasMiddleware
         } elseif ($user->hasRole('anak-pkl')) {
             // Jika user adalah anak PKL
             $query->where('id_anak_pkl', $user->id_anak_pkl);
-        } 
+        }
 
         // Order berdasarkan tanggal penilaian terbaru
         $penilaian = $query->orderBy('tanggal_penilaian', 'desc')->paginate(10);
@@ -79,12 +80,25 @@ class PenilaianController extends Controller implements HasMiddleware
                 $totalNilai += $detail['nilai'];
             }
             $rataRata = $totalNilai / $jumlahNilai;
+
+            //jika nilai rata rata
+            if ($rataRata >= 90 && $rataRata <= 100) {
+                $grade = 'Sangat Baik';
+            } elseif ($rataRata >= 75 && $rataRata < 90) {
+                $grade = 'Baik';
+            } elseif ($rataRata >= 60 && $rataRata < 75) {
+                $grade = 'Cukup';
+            } else {
+                $grade = 'Belum Memenuhi Kriteria';
+            }
+
             // Simpan data penilaian
             $penilaian = new Penilaian();
             $penilaian->id_mentor = $request->id_mentor;
             $penilaian->id_anak_pkl = $request->id_anak_pkl;
             $penilaian->tanggal_penilaian = now();
             $penilaian->nilai_rata_rata = $rataRata;
+            $penilaian->grade = $grade;
             $penilaian->save();
             // dd('sampe sini ga');
 
@@ -129,6 +143,7 @@ class PenilaianController extends Controller implements HasMiddleware
 
     public function update(Request $request, $id): RedirectResponse
     {
+        // dd($request->all());
         $penilaian = Penilaian::find($id);
 
         $request->validate([
@@ -145,11 +160,23 @@ class PenilaianController extends Controller implements HasMiddleware
             $jumlahNilai = count($request->detail_penilaian);
             $rataRata = $totalNilai / $jumlahNilai;
 
+            if ($rataRata >= 90 && $rataRata <= 100) {
+                $grade = 'Sangat Baik';
+            } elseif ($rataRata >= 75 && $rataRata < 90) {
+                $grade = 'Baik';
+            } elseif ($rataRata >= 60 && $rataRata < 75) {
+                $grade = 'Cukup';
+            } else {
+                $grade = 'Belum Memenuhi Kriteria';
+            }
+            // dd($grade);
+
             // Perbarui data penilaian
             $penilaian->id_mentor = $request->id_mentor;
             $penilaian->id_anak_pkl = $request->id_anak_pkl;
             $penilaian->tanggal_penilaian = $request->tanggal_penilaian; // Gunakan key yang benar
             $penilaian->nilai_rata_rata = $rataRata;
+            $penilaian->grade = $grade;
             $penilaian->save();
 
             // Perbarui detail penilaian
@@ -207,5 +234,12 @@ class PenilaianController extends Controller implements HasMiddleware
         // Tambahkan return default jika semua blok gagal
         return redirect()->route('penilaian.index')
             ->with('error', 'Terjadi kesalahan yang tidak diketahui.');
+    }
+
+    public function viewSertifikat($id)
+    {
+        $sertifikat = Sertifikat::where('id_anak_pkl', $id)->first();
+
+        return view('sertifikat.view-sertifikat', compact('sertifikat'));
     }
 }

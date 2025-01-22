@@ -300,10 +300,30 @@ return [
             ]
         ],
         [
+            'group' => 'riwayat-mentoring',
+            'access' => [
+                'riwayat-mentoring view',
+                'riwayat-mentoring create',
+                'riwayat-mentoring edit',
+                'riwayat-mentoring delete',
+            ]
+        ],
+        [
+            'group' => 'detail-mentoring',
+            'access' => [
+                'detail-mentoring view',
+                'detail-mentoring create',
+                'detail-mentoring edit',
+                'detail-mentoring delete',
+            ]
+        ],
+        [
             'group' => 'laporan',
             'access' => [
                 'laporan jurnal view',
                 'laporan jurnal download',
+                'rekap jurnal view',
+                'laporan mentoring view',
             ]
         ],
     ]

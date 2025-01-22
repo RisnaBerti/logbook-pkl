@@ -59,7 +59,9 @@
                 @foreach ($periode as $dt)
                     <option value="{{ $dt->id_periode_pkl }}"
                         {{ old('id_periode_pkl', $anakPkl?->id_periode_pkl) == $dt->id_periode_pkl ? 'selected' : '' }}>
-                        {{ $dt->tanggal_mulai }} - {{ $dt->tanggal_selesai }} <!-- Misalnya, nama unit yang ingin ditampilkan -->
+                        {{ now()->parse($dt?->tanggal_mulai)->format('d M Y') }} s.d
+                        {{ now()->parse($dt?->tanggal_selesai)->format('d M Y') }}
+                        <!-- Misalnya, nama unit yang ingin ditampilkan -->
                     </option>
                 @endforeach
             </select>
@@ -115,6 +117,15 @@
             @enderror
         </div>
         <div class="mb-4">
+            <!-- Pratinjau logo jika sudah ada -->
+            @if ($anakPkl?->foto_anak_pkl)
+                <div class="mt-3">
+                    <p>Foto saat ini:</p>
+                    <img src="{{ asset('storage/foto/anak-pkl/' . $anakPkl->foto_anak_pkl) }}" alt="Foto Saat Ini"
+                        class="img-thumbnail" style="max-height: 100px;">
+                </div>
+            @endif
+
             <label for="foto_anak_pkl" class="form-label">Foto Anak Pkl</label>
             <input type="file" name="foto_anak_pkl"
                 class="form-control {{ $errors->has('foto_anak_pkl') ? 'is-invalid' : '' }}" id="foto_anak_pkl"

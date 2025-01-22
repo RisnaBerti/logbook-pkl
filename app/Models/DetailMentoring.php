@@ -11,44 +11,39 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 /**
- * Class Penilaian
+ * Class DetailMentoring
  * 
- * @property string $id_penilaian
+ * @property string $id_detail_mentoring
+ * @property string $id_riwayat_mentoring
  * @property string $id_anak_pkl
  * @property string $id_mentor
- * @property string $id_keterampilan
- * @property Carbon $tanggal_penilaian
- * @property int $nilai
- * @property string $keterangan
+ * @property int|null $hari_mentor
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
  * @property AnakPkl $anak_pkl
- * @property Keterampilan $keterampilan
  * @property Mentor $mentor
+ * @property RiwayatMentoring $riwayat_mentoring
  *
  * @package App\Models
  */
-class Penilaian extends Model
+class DetailMentoring extends Model
 {
 	use HasUlids;
 
-	protected $table = 'penilaian';
-	protected $primaryKey = 'id_penilaian';
+	protected $table = 'detail_mentoring';
+	protected $primaryKey = 'id_detail_mentoring';
 	public $incrementing = false;
 
 	protected $casts = [
-		'tanggal_penilaian' => 'datetime',
-		'nilai' => 'int'
+		'hari_mentor' => 'int'
 	];
 
 	protected $fillable = [
-		'id_mentor',
+		'id_riwayat_mentoring',
 		'id_anak_pkl',
-		'tanggal_penilaian',
-		'grade',
-		'nilai_rata_rata',
-		'keterangan'
+		'id_mentor',
+		'hari_mentor'
 	];
 
 	public function resolveRouteBinding($value, $field = null)
@@ -66,8 +61,8 @@ class Penilaian extends Model
 		return $this->belongsTo(Mentor::class, 'id_mentor');
 	}
 
-	public function detail()
+	public function riwayat_mentoring()
 	{
-		return $this->hasMany(DetailPenilaian::class, 'id_penilaian', 'id_penilaian');
+		return $this->belongsTo(RiwayatMentoring::class, 'id_riwayat_mentoring');
 	}
 }

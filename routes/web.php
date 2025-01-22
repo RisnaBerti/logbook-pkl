@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AnakPklController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DetailMentoringController;
 use App\Http\Controllers\DetailPenilaianController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\JurnalController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\MentorController;
 use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\PeriodePklController;
+use App\Http\Controllers\RiwayatMentoringController;
 use App\Http\Controllers\RoleAndPermissionController;
 use App\Http\Controllers\SekolahController;
 use App\Http\Controllers\SertifikatController;
@@ -57,11 +59,17 @@ Route::middleware('auth')->group(function () {
     Route::resource('feedback', FeedbackController::class);
     Route::resource('sertifikat', SertifikatController::class);
     Route::resource('jurnal', JurnalController::class);
+    Route::resource('riwayat-mentoring', RiwayatMentoringController::class);
+    Route::resource('detail-mentoring', DetailMentoringController::class);
 
     Route::post('/jurnal/{jurnal}/feedback', [JurnalController::class, 'addFeedback'])->name('jurnal.add-feedback');
     Route::delete('/jurnal-feedback/{feedback}', [JurnalController::class, 'deleteFeedback'])->name('jurnal.delete-feedback');
 
     Route::get('/sertifikat/view-sertifikat/{id}', [SertifikatController::class, 'viewSertifikat'])->name('sertifikat.view-sertifikat');
     Route::get('/sertifikat/download/{id}', [SertifikatController::class, 'downloadSertifikat'])->name('sertifikat.download');
+
+    Route::get('/penilain/view-sertifikat/{id}', [PenilaianController::class, 'viewSertifikat'])->name('penilaian.view-sertifikat');
     Route::get('/laporan/jurnal', [LaporanController::class, 'laporanJurnal'])->name('laporan.jurnal');
+    Route::get('/rekap/jurnal', [LaporanController::class, 'rekapJurnal'])->name('rekap.jurnal');
+    Route::get('/laporan/mentoring', [LaporanController::class, 'laporanMentoring'])->name('laporan.mentoring');
 });

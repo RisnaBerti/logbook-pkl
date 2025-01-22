@@ -8,7 +8,7 @@
                     <option value="">Pilih Mentor</option>
                     @foreach ($mentors as $mentor)
                         <option value="{{ $mentor->id_mentor }}"
-                            {{ old('id_anak_pkl', $penilaian?->id_mentor) == $mentor->id_mentor ? 'selected' : '' }}>
+                            {{ old('id_anak_pkl', $riwayatMentoring?->id_mentor) == $mentor->id_mentor ? 'selected' : '' }}>
                             {{ $mentor->nama_mentor }}
                         </option>
                     @endforeach
@@ -18,24 +18,14 @@
                 @enderror
             </div>
             <div class="col-md-6">
-                <label for="id_anak_pkl" class="form-label">Anak PKL</label>
-                <select name="id_anak_pkl" class="form-select {{ $errors->has('id_anak_pkl') ? 'is-invalid' : '' }}"
-                    id="id_anak_pkl">
-                    <option value="">Pilih Anak PKL</option>
-                    @foreach ($anakPkl as $anak)
-                        <option value="{{ $anak->id_anak_pkl }}"
-                            {{ old('id_anak_pkl', $penilaian?->id_anak_pkl) == $anak->id_anak_pkl ? 'selected' : '' }}>
-                            {{ $anak->nama_anak_pkl }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('id_anak_pkl')
+                <label for="tanggal_mulai" class="form-label">Periode Mentoring</label>
+                <x-input.daterangepicker name1="tanggal_mulai" name2="tanggal_akhir"
+                    value1="{{ old('tanggal_mulai', $riwayatMentoring['tanggal_mulai']) }}"
+                    value2="{{ old('tanggal_akhir', $riwayatMentoring['tanggal_akhir']) }}"
+                    placeholder="Pilih Rentang Tanggal" opens="right" customRangeLabel="Periode Mentoring" />
+                @error('tanggal_mulai')
                     <small class="invalid-feedback">{{ $message }}</small>
                 @enderror
-
-                <input type="hidden" name="tanggal_penilaian" class="form-control"
-                    value="{{ $penilaian->tanggal_penilaian }}">
-                <input type="hidden" name="keterangan" class="form-control" value="{{ $penilaian->keterangan }}">
             </div>
         </div>
 
@@ -43,35 +33,35 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Keterampilan</th>
-                        <th>Nilai</th>
+                        <th>Anak PKL</th>
+                        <th>Hari Mentor</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody id="penilaian-rows">
-                    @if ($penilaian && $penilaian->detail) {{-- Jika ada data penilaian --}}
-                        @foreach ($penilaian->detail as $index => $detail)
-                            <tr class="penilaian-row">
+                <tbody id="mentoring-rows">
+                    @if ($riwayatMentoring && $riwayatMentoring->detail_mentoring) {{-- Jika ada data penilaian --}}
+                        @foreach ($riwayatMentoring->detail_mentoring as $index => $detail)
+                            <tr class="mentoring-row">
                                 <td>
-                                    <select name="detail_penilaian[{{ $index }}][id_keterampilan]"
+                                    <select name="detail_mentoring[{{ $index }}][id_anak_pkl]"
                                         class="form-select">
-                                        <option value="">Pilih Keterampilan</option>
-                                        @foreach ($keterampilan as $k)
-                                            <option value="{{ $k->id_keterampilan }}"
-                                                {{ $detail->id_keterampilan == $k->id_keterampilan ? 'selected' : '' }}>
-                                                {{ $k->nama_keterampilan }}
+                                        <option value="">Pilih Anak PKL</option>
+                                        @foreach ($anakPkl as $k)
+                                            <option value="{{ $k->id_anak_pkl }}"
+                                                {{ $detail->id_anak_pkl == $k->id_anak_pkl ? 'selected' : '' }}>
+                                                {{ $k->nama_anak_pkl }}
                                             </option>
                                         @endforeach
                                     </select>
                                 </td>
                                 <td>
-                                    <x-input.currency name="detail_penilaian[{{ $index }}][nilai]"
-                                        placeholder="Nilai" class="form-control" min="0" max="100"
-                                        step="1" value="{{ $detail->nilai }}" />
+                                    <x-input.currency name="detail_mentoring[{{ $index }}][hari_mentor]"
+                                        placeholder="Hari Mentoring" class="form-control" min="0" max="100"
+                                        step="1" value="{{ $detail->hari_mentor }}" readonly />
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-danger btn-sm remove-row"
-                                        data-id="{{ $detail->id_detail_penilaian }}"
+                                        data-id="{{ $detail->id_detail_mentoring }}"
                                         {{ $loop->count == 1 ? 'disabled' : '' }}>
                                         <i class="bx bx-trash"></i>
                                     </button>
@@ -80,18 +70,18 @@
                         @endforeach
                     @else
                         {{-- Jika tidak ada data, tampilkan satu baris kosong --}}
-                        <tr class="penilaian-row">
+                        <tr class="mentoring-row">
                             <td>
-                                <select name="detail_penilaian[0][id_keterampilan]" class="form-select">
+                                <select name="detail_mentoring[0][id_anak_pkl]" class="form-select">
                                     <option value="">Pilih Keterampilan</option>
                                     @foreach ($keterampilan as $k)
-                                        <option value="{{ $k->id_keterampilan }}">{{ $k->nama_keterampilan }}</option>
+                                        <option value="{{ $k->id_anak_pkl }}">{{ $k->nama_anak_pkl }}</option>
                                     @endforeach
                                 </select>
                             </td>
                             <td>
-                                <x-input.currency name="detail_penilaian[{{ $index }}][nilai]"
-                                    placeholder="Nilai" class="form-control" min="0" max="100"
+                                <x-input.currency name="detail_mentoring[{{ $index }}][hari_mentor]"
+                                    placeholder="Hari Mentoring" class="form-control" min="0" max="100"
                                     step="1" />
                             </td>
                             <td>
@@ -115,17 +105,17 @@
 
         <div class="d-flex justify-content-end">
             <button type="submit" class="btn btn-primary me-2">Perbarui</button>
-            <a href="{{ route('penilaian.index') }}" class="btn btn-secondary">Kembali</a>
+            <a href="{{ route('riwayat-mentoring.index') }}" class="btn btn-secondary">Kembali</a>
         </div>
 
     </div>
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const container = document.getElementById('penilaian-rows');
+        const container = document.getElementById('mentoring-rows');
         const addButton = document.getElementById('add-row');
         const form = document.querySelector('form');
-        let rowIndex = document.querySelectorAll('.penilaian-row').length - 1;
+        let rowIndex = document.querySelectorAll('.mentoring-row').length - 1;
 
         // Function to get CSRF token
         function getCsrfToken() {
@@ -162,7 +152,7 @@
         // Function to add new row
         addButton.addEventListener('click', function() {
             rowIndex++;
-            const newRow = container.querySelector('.penilaian-row').cloneNode(true);
+            const newRow = container.querySelector('.mentoring-row').cloneNode(true);
 
             // Reset nilai dan nama
             newRow.querySelectorAll('[name]').forEach(element => {
@@ -191,11 +181,11 @@
             const removeButton = event.target.closest('.remove-row');
             if (!removeButton) return;
 
-            const row = removeButton.closest('.penilaian-row');
+            const row = removeButton.closest('.mentoring-row');
             const idDetailPenilaian = removeButton.getAttribute('data-id');
 
             // Check if this is the last row
-            const totalRows = container.querySelectorAll('.penilaian-row').length;
+            const totalRows = container.querySelectorAll('.mentoring-row').length;
             if (totalRows <= 1) {
                 alert('Tidak dapat menghapus baris terakhir!');
                 return;
@@ -211,7 +201,7 @@
                         throw new Error('CSRF token tidak ditemukan');
                     }
 
-                    const response = await fetch(`/detail-penilaian/${idDetailPenilaian}`, {
+                    const response = await fetch(`/detail-mentoring/${idDetailPenilaian}`, {
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': csrfToken,
@@ -244,19 +234,19 @@
         form.addEventListener('submit', function(event) {
             event.preventDefault();
 
-            const rows = document.querySelectorAll('.penilaian-row');
+            const rows = document.querySelectorAll('.mentoring-row');
             let isValid = true;
             let errorMessage = '';
 
             // Validate mentor and anak PKL selection
-            const mentorSelect = document.getElementById('id_mentor');
+            // const mentorSelect = document.getElementById('id_mentor');
             const anakPklSelect = document.getElementById('id_anak_pkl');
 
-            if (mentorSelect && !mentorSelect.value) {
-                mentorSelect.classList.add('is-invalid');
-                errorMessage += '- Pilih Mentor\n';
-                isValid = false;
-            }
+            // if (mentorSelect && !mentorSelect.value) {
+            //     mentorSelect.classList.add('is-invalid');
+            //     errorMessage += '- Pilih Mentor\n';
+            //     isValid = false;
+            // }
 
             if (anakPklSelect && !anakPklSelect.value) {
                 anakPklSelect.classList.add('is-invalid');
@@ -267,9 +257,9 @@
             // Validate each row
             rows.forEach((row, index) => {
                 const keterampilan = row.querySelector(
-                    'select[name^="detail_penilaian"][name$="[id_keterampilan]"]');
+                    'select[name^="detail_mentoring"][name$="[id_anak_pkl]"]');
                 const nilaiHidden = row.querySelector(
-                    'input[name^="detail_penilaian"][name$="[nilai]"]');
+                    'input[name^="detail_mentoring"][name$="[hari_mentor]"]');
 
                 if (!keterampilan.value) {
                     keterampilan.classList.add('is-invalid');

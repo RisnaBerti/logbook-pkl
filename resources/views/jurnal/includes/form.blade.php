@@ -7,7 +7,7 @@
                 @foreach ($anak_pkl as $dt)
                     <option value="{{ $dt->id_anak_pkl }}"
                         {{ old('id_anak_pkl', $jurnal?->id_anak_pkl) == $dt->id_anak_pkl ? 'selected' : '' }}>
-                        {{ $dt->nama_anak_pkl }} | {{ $dt->mentor->nama_mentor }}
+                        {{ $dt->nama_anak_pkl }} 
                     </option>
                 @endforeach
             </select>

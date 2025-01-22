@@ -1,13 +1,13 @@
-<x-layouts.app title="Penilaian" activeMenu="penilaian">
+<x-layouts.app title="Riwayat Mentoring" activeMenu="riwayat-mentoring">
     <div class="my-5 container-fluid">
-        <x-breadcrumb title="Penilaian" :breadcrumbs="[['label' => 'Dashboard', 'url' => url('/')], ['label' => 'Penilaian']]" />
+        <x-breadcrumb title="Riwayat Mentoring" :breadcrumbs="[['label' => 'Dashboard', 'url' => url('/')], ['label' => 'Riwayat Mentoring']]" />
 
         <x-bs-toast />
 
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                @can('penilaian create')
-                    <a href="{{ route('penilaian.create') }}" class="btn btn-primary">
+                @can('riwayat-mentoring create')
+                    <a href="{{ route('riwayat-mentoring.create') }}" class="btn btn-primary">
                         <span class="bx bx-plus me-1"></span>Tambah Data
                     </a>
                 @endcan
@@ -18,61 +18,42 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th class="text-nowrap">Anak Pkl</th>
                                 <th>Mentor</th>
-                                <th class="text-nowrap">Tanggal Penilaian</th>
-                                <th class="text-nowrap">Nilai Rata - Rata</th>
-                                <th>Grade</th>
+                                <th class="text-nowrap">Tanggal Mulai</th>
+                                <th class="text-nowrap">Tanggal Selesai</th>
+                                <th class="text-center text-nowrap">Detail</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($penilaian as $item)
+                            @foreach ($riwayatMentoring as $item)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $item->anak_pkl?->nama_anak_pkl }}</td>
                                     <td>{{ $item->mentor?->nama_mentor }}</td>
-                                    <td>{{ now()->parse($item->tanggal_penilaian)->format('d M Y') }}</td>
-                                    <td>{{ $item->nilai_rata_rata }}</td>
-                                    <td>
-                                        @if ($item->grade == 'Sangat Baik')
-                                            <span class="badge bg-success">{{ $item->grade }}</span>
-                                        @elseif($item->grade == 'Baik')
-                                            <span class="badge bg-primary">{{ $item->grade }}</span>
-                                        @elseif($item->grade == 'Cukup')
-                                            <span class="badge bg-warning">{{ $item->grade }}</span>
-                                        @elseif($item->grade == 'Belum Memenuhi Kriteria')
-                                            <span class="badge bg-danger">{{ $item->grade }}</span>
-                                        @else
-                                            <span>{{ $item->grade }}</span>
-                                        @endif
-                                    </td>
-                                    {{-- <td>{{ $item->keterangan }}</td> --}}
+                                    <td>{{ now()->parse($item->tanggal_mulai)->format('d M Y') }}</td>
+                                    <td>{{ now()->parse($item->tanggal_akhir)->format('d M Y') }}</td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
-                                            @can('detail-penilaian view')
+                                            @can('detail-mentoring view')
                                                 <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
-                                                    data-bs-title="Detail Nilai"
-                                                    data-bs-target="#detailModal{{ $item->id_penilaian }}">
-                                                    <span class="bx bx-info-circle me-1"></span>
+                                                    data-bs-title="Detail"
+                                                    data-bs-target="#detailModal{{ $item->id_riwayat_mentoring }}">
+                                                    <span class="bx bx-info-circle me-1"> Detail</span>
                                                 </button>
                                             @endcan
-                                            @can('penilaian view')
-                                                <a href="{{ route('penilaian.view-sertifikat', $item->id_anak_pkl) }}"
-                                                    class="btn btn-warning btn-sm ms-1" data-bs-toggle="tooltip"
-                                                    data-bs-title="Sertifikat">
-                                                    <span class="bx bx-archive"></span>
-                                                </a>
-                                            @endcan
-                                            @can('penilaian edit')
-                                                <a href="{{ route('penilaian.edit', $item) }}"
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            @can('riwayat-mentoring edit')
+                                                <a href="{{ route('riwayat-mentoring.edit', $item) }}"
                                                     class="btn btn-primary btn-sm ms-1" data-bs-toggle="edit">
                                                     <span class="bx bx-pencil me-1"></span>
                                                 </a>
                                             @endcan
-                                            @can('penilaian delete')
-                                                <form action="{{ route('penilaian.destroy', $item) }}" method="POST"
-                                                    class="d-inline">
+                                            @can('riwayat-mentoring delete')
+                                                <form action="{{ route('riwayat-mentoring.destroy', $item) }}"
+                                                    method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger btn-sm ms-1"
@@ -85,13 +66,20 @@
                                         </div>
 
                                         <!-- Modal Detail -->
-                                        <div class="modal fade" id="detailModal{{ $item->id_penilaian }}"
+                                        <div class="modal fade" id="detailModal{{ $item->id_riwayat_mentoring }}"
                                             tabindex="-1" aria-hidden="true">
                                             <div class="modal-dialog modal-lg">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Detail Nilai -
-                                                            {{ $item->anak_pkl?->nama_anak_pkl }}</h5>
+                                                        <div class="align-items-end">
+                                                            <h5 class="modal-title">Detail Mentoring Anak PKL -
+                                                                {{ $item->mentor?->nama_mentor }}</h5>
+                                                            <p class="mb-0">Periode:
+                                                                {{ now()->parse($item->tanggal_mulai)->format('d M Y') }}
+                                                                s.d
+                                                                {{ now()->parse($item->tanggal_akhir)->format('d M Y') }}
+                                                            </p>
+                                                        </div>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
@@ -100,24 +88,19 @@
                                                             <thead>
                                                                 <tr>
                                                                     <th>No</th>
-                                                                    <th>Keterampilan</th>
-                                                                    <th>Nilai</th>
-                                                                    {{-- <th>Keterangan</th> --}}
+                                                                    <th class="text-nowrap">Anak Pkl</th>
+                                                                    <th class="text-nowrap">Sekolah</th>
+                                                                    <th class="text-nowrap">Jumlah Hari</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                @foreach ($item->detail as $detail)
+                                                                @foreach ($item->detail_mentoring as $detail)
                                                                     <tr>
                                                                         <td>{{ $loop->iteration }}</td>
-                                                                        <td>{{ $detail->keterampilan?->nama_keterampilan }}
+                                                                        <td>{{ $detail->anak_pkl?->nama_anak_pkl }}
+                                                                        <td>{{ $detail->anak_pkl->sekolah?->nama_sekolah }}
+                                                                        <td>{{ $detail->hari_mentor }}
                                                                         </td>
-                                                                        <td class="text-center">
-                                                                            <span
-                                                                                class="badge bg-{{ $detail->nilai >= 76 ? 'success' : 'danger' }}">
-                                                                                {{ $detail->nilai }}
-                                                                            </span>
-                                                                        </td>
-                                                                        {{-- <td>{{ $detail->keterangan }}</td> --}}
                                                                     </tr>
                                                                 @endforeach
                                                             </tbody>
@@ -139,7 +122,7 @@
 
                 <!-- Pagination -->
                 <div class="mt-3 d-flex justify-content-end">
-                    {!! $penilaian->withQueryString()->links() !!}
+                    {!! $riwayatMentoring->withQueryString()->links() !!}
                 </div>
             </div>
 

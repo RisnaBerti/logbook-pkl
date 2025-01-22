@@ -10,16 +10,49 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title mb-3">Filter Data</h5>
-                        <form method="GET" action="{{ route('laporan.jurnal') }}" class="row g-3">
+                        <form method="GET" action="{{ route('rekap.jurnal') }}" class="row g-3">
                             <div class="col-md-4">
-                                <label class="form-label">Rentang Tanggal</label>
-                                <div class="input-group">
-                                    <input type="date" class="form-control" name="tanggal_awal"
-                                        value="{{ $forms['tanggal_awal'] ?? '' }}">
-                                    <span class="input-group-text">sampai</span>
-                                    <input type="date" class="form-control" name="tanggal_akhir"
-                                        value="{{ $forms['tanggal_akhir'] ?? '' }}">
-                                </div>
+                                <label class="form-label">Bulan</label>
+                                <select class="form-select select2" name="bulan">
+                                    @php
+                                        $months = [
+                                            1 => 'Januari',
+                                            2 => 'Februari',
+                                            3 => 'Maret',
+                                            4 => 'April',
+                                            5 => 'Mei',
+                                            6 => 'Juni',
+                                            7 => 'Juli',
+                                            8 => 'Agustus',
+                                            9 => 'September',
+                                            10 => 'Oktober',
+                                            11 => 'November',
+                                            12 => 'Desember',
+                                        ];
+                                    @endphp
+                                    @foreach ($months as $monthNum => $monthName)
+                                        <option value="{{ $monthNum }}"
+                                            {{ $forms['bulan'] == $monthNum ? 'selected' : '' }}>
+                                            {{ $monthName }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Tahun</label>
+                                <select class="form-select select2" name="tahun">
+                                    @php
+                                        $currentYear = date('Y');
+                                        $startYear = 2023;
+                                        $years = range($startYear, $currentYear);
+                                    @endphp
+                                    @foreach ($years as $year)
+                                        <option value="{{ $year }}"
+                                            {{ $forms['tahun'] == $year ? 'selected' : '' }}>
+                                            {{ $year }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                             @if (auth()->user()->id_anak_pkl)
                                 <div class="col-md-3">
@@ -80,7 +113,7 @@
                                     <button type="submit" class="btn btn-primary">
                                         <i class="fas fa-filter"></i> Filter
                                     </button>
-                                    <a href="{{ route('laporan.jurnal') }}" class="btn btn-secondary">
+                                    <a href="{{ route('rekap.jurnal') }}" class="btn btn-secondary">
                                         <i class="fas fa-sync"></i> Reset
                                     </a>
                                 </div>
@@ -94,62 +127,54 @@
         <!-- Data Table Section -->
         <div class="row">
             <div class="col-12">
+                {{-- Di View --}}
                 <div class="card">
                     <div class="card-body">
+                        <h5 class="card-title mb-3">
+                            {{-- Kalender Jurnal: {{ $months[$forms['bulan']] }} {{ $forms['tahun'] }} --}}
+                        </h5>
                         <div class="table-responsive">
-                            <table id="journal-table" class="table table-striped table-bordered dt-responsive nowrap">
+                            <table class="table table-bordered text-center">
                                 <thead>
-                                    <tr>
-                                        <th width="5%">No</th>
-                                        <th>Nama</th>
-                                        <th width="12%">Tanggal</th>
-                                        <th width="10%">Durasi</th>
-                                        <th>Aktivitas</th>
-                                        <th>Keterangan</th>
-                                        <th width="10%">Gambar</th>
-                                        <th width="8%">Aksi</th>
+                                    <tr class="bg-light">
+                                        <th>Minggu</th>
+                                        <th>Senin</th>
+                                        <th>Selasa</th>
+                                        <th>Rabu</th>
+                                        <th>Kamis</th>
+                                        <th>Jumat</th>
+                                        <th>Sabtu</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($data as $row)
+                                    @php
+                                        $currentDay = 1;
+                                        $totalDays = count($calendar);
+                                    @endphp
+
+                                    @foreach (array_chunk($calendar, 7, true) as $week)
                                         <tr>
-                                            <td class="text-center">{{ $loop->iteration }}</td>
-                                            <td>{{ $row->anak_pkl?->nama_anak_pkl }}</td>
-                                            <td>{{ now()->parse($row->periode_pkl?->tanggal_jurnal)->format('d M Y') }}
-                                            </td>
-                                            <td>{{ $row->durasi_format }}</td>
-                                            <td>{{ $row->aktifitas }}</td>
-                                            <td>{{ $row->keterangan }}</td>
-                                            <td class="text-center">
-                                                @if ($row->gambar_pendukung)
-                                                    <img src="{{ asset('storage/jurnal/' . $row->gambar_pendukung) }}"
-                                                        class="img-thumbnail cursor-pointer" alt="Gambar"
-                                                        style="max-width: 50px; max-height: 50px;"
-                                                        onclick="showImage(this.src)">
-                                                @else
-                                                    <span class="text-muted">-</span>
-                                                @endif
-                                            </td>
-                                            <td class="text-center">
-                                                @can('feedback view')
-                                                    <a href="{{ route('feedback.show', $row) }}"
-                                                        class="btn btn-info btn-sm" data-bs-toggle="tooltip"
-                                                        title="Lihat Detail">
-                                                        <i class="fas fa-info-circle"></i>
-                                                    </a>
-                                                @endcan
-                                            </td>
+                                            @foreach ([0, 1, 2, 3, 4, 5, 6] as $dayOfWeek)
+                                                <td
+                                                    class="position-relative {{ isset($week[$currentDay]) && $week[$currentDay]['weekday'] == $dayOfWeek ? '' : 'bg-light' }}">
+                                                    @if (isset($week[$currentDay]) && $week[$currentDay]['weekday'] == $dayOfWeek)
+                                                        <div
+                                                            class="{{ $week[$currentDay]['hasEntry'] ? 'bg-primary text-white' : '' }} 
+                                                    {{ $week[$currentDay]['isToday'] ? 'border border-danger' : '' }} p-2">
+                                                            {{ $currentDay }}
+                                                            @if ($week[$currentDay]['hasEntry'])
+                                                                <div>Ya</div>
+                                                                <a href="{{ route('jurnal.show', ['tanggal_jurnal' => $week[$currentDay]['dateString']]) }}"
+                                                                    class="stretched-link" data-bs-toggle="tooltip"
+                                                                    title="Lihat detail jurnal"></a>
+                                                            @endif
+                                                        </div>
+                                                        @php $currentDay++; @endphp
+                                                    @endif
+                                                </td>
+                                            @endforeach
                                         </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="8" class="text-center py-4">
-                                                <div class="text-muted">
-                                                    <i class="fas fa-info-circle me-2"></i>
-                                                    Tidak ada data yang tersedia
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforelse
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
