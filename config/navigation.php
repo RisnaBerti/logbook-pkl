@@ -49,24 +49,31 @@ $nav = [
                 ],
             ],
         ],
+        // [
+        //     "title" => "Penilaian",
+        //     "icon" => '<i class="menu-icon tf-icons bx bx-pencil"></i>',
+        //     "group" => "",
+        //     "submenus" => [
+        //         [
+        //             "title" => "Penilaian",
+        //             "icon" => '<i class="menu-icon tf-icons bx bx-check-circle"></i>',
+        //             "route" => 'penilaian.index',
+        //             "permissions" => ["penilaian view"],
+        //         ],
+        // [
+        //     "title" => "Sertifikat",
+        //     "icon" => '<i class="menu-icon tf-icons bx bx-award"></i>',
+        //     "route" => 'sertifikat.index',
+        //     "permissions" => ["sertifikat view"],
+        // ],
+        //     ],
+        // ],
         [
             "title" => "Penilaian",
-            "icon" => '<i class="menu-icon tf-icons bx bx-pencil"></i>',
+            "icon" => '<i class="menu-icon tf-icons bx bx-award"></i>',
+            "route" => 'penilaian.index',
             "group" => "",
-            "submenus" => [
-                [
-                    "title" => "Penilaian",
-                    "icon" => '<i class="menu-icon tf-icons bx bx-check-circle"></i>',
-                    "route" => 'penilaian.index',
-                    "permissions" => ["penilaian view"],
-                ],
-                [
-                    "title" => "Sertifikat",
-                    "icon" => '<i class="menu-icon tf-icons bx bx-award"></i>',
-                    "route" => 'sertifikat.index',
-                    "permissions" => ["sertifikat view"],
-                ],
-            ],
+            "permissions" => ["penilaian view"],
         ],
         [
             "title" => "Jurnal",

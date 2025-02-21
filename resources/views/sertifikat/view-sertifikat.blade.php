@@ -6,21 +6,33 @@
 
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">Preview Sertifikat</h5>
+                <h5 class="mb-0 card-title">Preview Sertifikat</h5>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <!-- Front Certificate -->
-                    <div class="col-md-6 mb-4">
+                    <!-- Sertifikat Bagian Depan -->
+                    <div class="mb-4 col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                <h6 class="card-title mb-0">Sertifikat Bagian Depan</h6>
+                                <h6 class="mb-0 card-title">Sertifikat Bagian Depan</h6>
                             </div>
                             <div class="card-body">
                                 <div class="position-relative">
                                     @if ($sertifikat?->sertifikat_depan)
-                                        <img src="{{ asset('storage/sertifikat/' . $sertifikat->sertifikat_depan) }}"
-                                            alt="Sertifikat Depan" class="img-fluid rounded">
+                                        @php
+                                            $extDepan = pathinfo($sertifikat->sertifikat_depan, PATHINFO_EXTENSION);
+                                        @endphp
+
+                                        @if ($extDepan === 'pdf')
+                                            <iframe
+                                                src="{{ asset('storage/sertifikat/' . $sertifikat->sertifikat_belakang) }}"
+                                                style="width: 100%; height: 500px; border: none;">
+                                                Browser Anda tidak mendukung pratinjau PDF.
+                                            </iframe>
+                                        @else
+                                            <img src="{{ asset('storage/sertifikat/' . $sertifikat->sertifikat_depan) }}"
+                                                alt="Sertifikat Depan" class="rounded img-fluid">
+                                        @endif
                                     @else
                                         <span>Tidak ada Sertifikat</span>
                                     @endif
@@ -29,39 +41,64 @@
                         </div>
                     </div>
 
-                    <!-- Back Certificate -->
-                    <div class="col-md-6 mb-4">
+                    <!-- Sertifikat Bagian Belakang -->
+                    <div class="mb-4 col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                <h6 class="card-title mb-0">Sertifikat Bagian Belakang</h6>
+                                <h6 class="mb-0 card-title">Sertifikat Bagian Belakang</h6>
                             </div>
                             <div class="card-body">
-                                @if ($sertifikat?->sertifikat_belakang)
-                                    <img src="{{ asset('storage/sertifikat/' . $sertifikat->sertifikat_belakang) }}"
-                                        alt="Sertifikat Belakang" class="img-fluid rounded">
-                                @else
-                                    <span>Tidak ada Sertifikat</span>
-                                @endif
+                                <div class="position-relative">
+                                    @if ($sertifikat?->sertifikat_belakang)
+                                        @php
+                                            $extBelakang = pathinfo(
+                                                $sertifikat->sertifikat_belakang,
+                                                PATHINFO_EXTENSION,
+                                            );
+                                        @endphp
+
+                                        @if ($extBelakang === 'pdf')
+                                            <iframe
+                                                src="{{ asset('storage/sertifikat/' . $sertifikat->sertifikat_belakang) }}"
+                                                style="width: 100%; height: 500px; border: none;">
+                                                Browser Anda tidak mendukung pratinjau PDF.
+                                            </iframe>
+                                        @else
+                                            <img src="{{ asset('storage/sertifikat/' . $sertifikat->sertifikat_belakang) }}"
+                                                alt="Sertifikat Belakang" class="rounded img-fluid">
+                                        @endif
+                                    @else
+                                        <span>Tidak ada Sertifikat</span>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Download Buttons -->
-                <div class="row mt-3">
-                    <div class="col-12 text-center">
+                <!-- Tombol Unduh dan Cetak -->
+                <div class="mt-3 row">
+                    <div class="text-center col-12">
                         <button class="btn btn-primary me-2" onclick="window.print()">
                             <i class="bx bx-printer me-1"></i>Cetak Sertifikat
                         </button>
-                        {{-- <a href="{{ route('sertifikat.download', $sertifikat?->id_sertifikat) }}"
-                            class="btn btn-success">
-                            <i class="bx bx-download me-1"></i>Unduh Sertifikat
-                        </a> --}}
+                        @if ($sertifikat?->sertifikat_depan)
+                            <a href="{{ asset('storage/sertifikat/' . $sertifikat->sertifikat_depan) }}"
+                                class="btn btn-success" download>
+                                <i class="bx bx-download me-1"></i>Unduh Sertifikat Depan
+                            </a>
+                        @endif
+                        @if ($sertifikat?->sertifikat_belakang)
+                            <a href="{{ asset('storage/sertifikat/' . $sertifikat->sertifikat_belakang) }}"
+                                class="btn btn-success" download>
+                                <i class="bx bx-download me-1"></i>Unduh Sertifikat Belakang
+                            </a>
+                        @endif
                     </div>
                 </div>
 
-                <!-- Certificate Information -->
-                <div class="row mt-4">
+                <!-- Informasi Sertifikat -->
+                <div class="mt-4 row">
                     <div class="col-12">
                         <div class="alert alert-info">
                             <i class="bx bx-info-circle me-2"></i>
@@ -73,7 +110,6 @@
             </div>
         </div>
     </div>
-
 
     <style>
         .certificate-content {
@@ -124,5 +160,4 @@
             }
         }
     </style>
-
 </x-layouts.app>

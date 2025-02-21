@@ -63,8 +63,8 @@ class SertifikatController extends Controller implements HasMiddleware
         $validatedData = $request->validate([
             'id_anak_pkl' => 'required|string|max:36',
             'keterangan' => 'nullable|string|max:100', // Keterangan bisa nullable karena otomatis
-            'sertifikat_depan' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'sertifikat_belakang' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'sertifikat_depan' => 'nullable|image|mimes:pdf|max:2048',
+            'sertifikat_belakang' => 'nullable|image|mimes:pdf|max:2048',
         ]);
 
         $validatedData['tanggal_sertifikat'] = now();
@@ -144,8 +144,8 @@ class SertifikatController extends Controller implements HasMiddleware
 
         $validatedData = $request->validate([
             'id_anak_pkl' => 'required|string|max:36',
-            'sertifikat_depan' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'sertifikat_belakang' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'sertifikat_depan' => 'nullable|image|mimes:pdf|max:2048',
+            'sertifikat_belakang' => 'nullable|image|mimes:pdf|max:2048',
             'keterangan' => 'required|string|max:100',
         ]);
 
@@ -178,9 +178,6 @@ class SertifikatController extends Controller implements HasMiddleware
             $sertifikatDepanToStore = $fileNameDepan;
             $sertifikatBelakangToStore = $fileNameBelakang;
         }
-
-
-
 
         try {
             $nilaiRataRata = Penilaian::where('id_anak_pkl', $validatedData['id_anak_pkl'])
@@ -250,7 +247,8 @@ class SertifikatController extends Controller implements HasMiddleware
     //view sertifikat
     public function viewSertifikat($id)
     {
-        $sertifikat = Sertifikat::find($id);
+        // $sertifikat = Sertifikat::find($id);
+        $sertifikat = Sertifikat::where('id_anak_pkl', $id)->first();
         return view('sertifikat.view-sertifikat', compact('sertifikat'));
     }
 
@@ -292,8 +290,8 @@ class SertifikatController extends Controller implements HasMiddleware
         // }
 
         $validatedData = $request->validate([
-            'sertifikat_depan' => 'required|mimes:jpeg,png,jpg|max:2048',
-            'sertifikat_belakang' => 'required|mimes:jpeg,png,jpg|max:2048',
+            'sertifikat_depan' => 'required|mimes:pdf|max:2048',
+            'sertifikat_belakang' => 'required|mimes:pdf|max:2048',
         ]);
 
         if ($request->hasFile('sertifikat_depan') && $request->hasFile('sertifikat_belakang')) {

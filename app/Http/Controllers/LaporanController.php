@@ -106,63 +106,6 @@ class LaporanController extends Controller
     }
 
     //fungsi rekap jurnal
-    // public function rekapJurnal(Request $request)
-    // {
-    //     $bulan = $request->input('bulan');
-    //     $tahun = $request->input('tahun');
-    //     $selected_anak_pkl = $request->input('anak_pkl');
-    //     $selected_mentor = $request->input('mentor');
-    //     $forms = [
-    //         'bulan' => $bulan,
-    //         'tahun' => $tahun,
-    //         'anak_pkl' => $selected_anak_pkl,
-    //         'mentor' => $selected_mentor,
-    //     ];
-
-    //     $mentor = Mentor::pluck('nama_mentor', 'id_mentor')->toArray();
-    //     $anak_pkl = AnakPkl::pluck('nama_anak_pkl', 'id_anak_pkl')->toArray();
-
-    //     $data = Jurnal::query();
-
-    //     // Apply date filters if bulan and tahun are provided
-    //     if ($bulan && $tahun) {
-    //         $data = $data->whereMonth('tanggal_jurnal', $bulan)
-    //             ->whereYear('tanggal_jurnal', $tahun);
-    //     }
-
-    //     // Apply filter for anak_pkl if provided
-    //     if ($selected_anak_pkl) {
-    //         $data = $data->where('id_anak_pkl', $selected_anak_pkl);
-    //     }
-
-    //     // Apply filter for mentor if provided
-    //     if ($selected_mentor) {
-    //         $data = $data->where('id_mentor', $selected_mentor);
-    //     }
-
-    //     // Fetch the filtered data
-    //     $data = $data->get();
-
-    //     $months = [
-    //         1 => 'Januari',
-    //         2 => 'Februari',
-    //         3 => 'Maret',
-    //         4 => 'April',
-    //         5 => 'Mei',
-    //         6 => 'Juni',
-    //         7 => 'Juli',
-    //         8 => 'Agustus',
-    //         9 => 'September',
-    //         10 => 'Oktober',
-    //         11 => 'November',
-    //         12 => 'Desember'
-    //     ];
-
-    //     // Pass the selected values back to the view for maintaining filter state
-    //     return view('laporan.rekap-jurnal', compact('data', 'mentor', 'anak_pkl', 'forms', 'months'));
-    // }
-
-    // Di Controller
     public function rekapJurnal(Request $request)
     {
         $bulan = $request->input('bulan', date('m'));
@@ -235,55 +178,6 @@ class LaporanController extends Controller
     }
 
     //fungsi laporanMentoring
-    // public function laporanMentoring(Request $request)
-    // {
-    //     $tanggal_awal = $request->tanggal_awal;
-    //     $tanggal_akhir = $request->tanggal_akhir;
-    //     $id_mentor = $request->mentor;
-    //     $id_sekolah = $request->sekolah;
-
-    //     $mentor = Mentor::query()->pluck('nama_mentor', 'id_mentor')->toArray();
-    //     $sekolah = Sekolah::query()->pluck('nama_sekolah', 'id_sekolah')->toArray();
-    //     $anak_pkl = AnakPkl::query()->pluck('nama_anak_pkl', 'id_anak_pkl')->toArray();
-
-    //     $forms = [
-    //         'tanggal_awal' => $tanggal_awal,
-    //         'tanggal_akhir' => $tanggal_akhir,
-    //         'mentor' => $id_mentor,
-    //         'sekolah' => $id_sekolah,
-    //     ];
-
-    //     $query = DetailMentoring::with([
-    //         'anak_pkl.sekolah',
-    //         'anak_pkl.periode_pkl',
-    //         'riwayat_mentoring.mentor'
-    //     ]);
-
-    //     if ($tanggal_awal && $tanggal_akhir) {
-    //         $query->whereHas('riwayat_mentoring', function ($q) use ($tanggal_awal, $tanggal_akhir) {
-    //             $q->whereBetween('tanggal_mulai', [$tanggal_awal, $tanggal_akhir])
-    //                 ->orWhereBetween('tanggal_akhir', [$tanggal_awal, $tanggal_akhir]);
-    //         });
-    //     }
-
-    //     if ($id_mentor) {
-    //         $query->whereHas('riwayat_mentoring', function ($q) use ($id_mentor) {
-    //             $q->where('id_mentor', $id_mentor);
-    //         });
-    //     }
-
-    //     if ($id_sekolah) {
-    //         $query->whereHas('anak_pkl.sekolah', function ($q) use ($id_sekolah) {
-    //             $q->where('id_sekolah', $id_sekolah);
-    //         });
-    //     }
-
-    //     $data = $query->get();
-
-    //     return view('laporan.laporan-mentoring', compact('data', 'mentor', 'anak_pkl', 'forms', 'sekolah'));
-    // }
-
-
     public function laporanMentoring(Request $request)
     {
         $bulan = $request->bulan;
@@ -357,7 +251,6 @@ class LaporanController extends Controller
             'daftar_tahun'
         ));
     }
-
 
     //detailLaporanMentoring
     public function detailLaporanMentoring($id)
